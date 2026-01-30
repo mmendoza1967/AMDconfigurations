@@ -1,30 +1,23 @@
 Package: AMDconfigurations
 Type: Package
-Title: Tools for AMD-Based Configuration Analysis in Complex Systems
+Title: Geometric Analysis of Configurations in High-Dimensional Spaces
 Version: 0.1.0
 Authors@R: 
-    person(
-        given = "Manuel",
-        family = "Barreiro",
-        role = c("aut", "cre"),
-        email = "your.email@domain.com"
-    )
-Description: 
-    Provides tools for analysing recurrent configurations in complex systems 
-    using the Average Membership Deviation (AMD) framework. Includes functions 
-    for estimating the optimal number of clusters, generating synthetic datasets 
-    with controlled compactness, calibrating sigma-equivalent noise levels, and 
-    selecting the best fuzzy c-means partition across repeated initialisations. 
-    Designed to support research on geometric and energetic principles of 
-    organisation across biological, ecological, geohistorical, and financial systems.
+    person("Manuel", "Mendoza", 
+           email = "mmendoza@mncn.csic.es", 
+           role = c("aut", "cre"))
+Description: Tools for analysing the geometry of configurations in high-dimensional 
+    spaces using Average Minimum Distance (AMD) curves and synthetic configuration 
+    generation. The package supports a domain-agnostic approach to studying the 
+    shape, dispersion, and internal structure of point clouds, with applications 
+    across biological, ecological, geohistorical, and financial systems.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
+Depends: 
+    R (>= 4.1)
 Imports:
-    e1071,
-    ggplot2,
     stats,
     utils
-
