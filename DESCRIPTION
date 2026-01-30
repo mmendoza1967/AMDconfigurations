@@ -6,9 +6,9 @@ Authors@R:
     person("Manuel", "Mendoza",
            email = "mmendoza@mncn.csic.es",
            role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-2143-8138")
+           comment = c(ORCID = "0000-0002-2143-8138"))
 Description: Tools for analysing the geometry of configurations in high-dimensional 
-    spaces using Average Minimum Distance (AMD) curves and synthetic configuration 
+    spaces using Average Membership Deviation (AMD) curves and synthetic configuration 
     generation. The package supports a domain-agnostic approach to studying the 
     shape, dispersion, and internal structure of point clouds, with applications 
     across biological, ecological, geohistorical, and financial systems.
@@ -21,5 +21,7 @@ RoxygenNote: 7.3.2
 Depends: 
     R (>= 4.1)
 Imports:
+    e1071,
+    ggplot2,
     stats,
     utils
