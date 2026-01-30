@@ -3,9 +3,10 @@ Type: Package
 Title: Geometric Analysis of Configurations in High-Dimensional Spaces
 Version: 0.1.0
 Authors@R: 
-    person("Manuel", "Mendoza", 
-           email = "mmendoza@mncn.csic.es", 
-           role = c("aut", "cre"))
+    person("Manuel", "Mendoza",
+           email = "mmendoza@mncn.csic.es",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-2143-8138")
 Description: Tools for analysing the geometry of configurations in high-dimensional 
     spaces using Average Minimum Distance (AMD) curves and synthetic configuration 
     generation. The package supports a domain-agnostic approach to studying the 
