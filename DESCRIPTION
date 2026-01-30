@@ -13,7 +13,6 @@ Description: Tools for analysing the geometry of configurations in high-dimensio
     across biological, ecological, geohistorical, and financial systems.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends: 
