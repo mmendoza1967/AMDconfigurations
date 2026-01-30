@@ -13,6 +13,8 @@ Description: Tools for analysing the geometry of configurations in high-dimensio
     shape, dispersion, and internal structure of point clouds, with applications 
     across biological, ecological, geohistorical, and financial systems.
 License: MIT + file LICENSE
+URL: https://github.com/mmendoza1967/AMDconfigurations
+BugReports: https://github.com/mmendoza1967/AMDconfigurations/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
