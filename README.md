@@ -1,0 +1,81 @@
+# AMDconfigurations
+
+**AMDconfigurations** provides tools for analysing the geometry of configurations in high‑dimensional spaces through the lens of *Average Minimum Distance (AMD)* curves and synthetic configuration generation.  
+The package is part of a broader research program aimed at identifying **recurrent geometric patterns** across biological, ecological, geohistorical, and financial systems.
+
+Rather than focusing on domain‑specific variables, AMDconfigurations treats each system as a set of points in a state space and studies the **shape, dispersion, and internal structure** of these point clouds.  
+The goal is to reveal **universal geometric signatures** that transcend the particularities of each domain.
+
+---
+
+## Motivation
+
+Many complex systems—cells, ecological communities, historical polities, financial markets—can be represented as **configurations of points** in a multidimensional space.  
+Despite their differences, these systems often exhibit:
+
+- recurrent spatial arrangements  
+- characteristic scales of dispersion  
+- transitions between geometric regimes  
+- clustering patterns that reflect underlying energetic or organizational constraints  
+
+Traditional statistical tools tend to collapse these structures into aggregate descriptors.  
+AMDconfigurations instead focuses on the **geometry of the configuration itself**, using AMD curves and related quantities as a way to quantify:
+
+- how points are distributed  
+- how “tight” or “spread” a configuration is  
+- how configurations compare to synthetic or null models  
+- how configurations cluster in configuration space  
+
+This geometric perspective is intended to support the search for **cross‑domain regularities** and **universal organizational principles**.
+
+---
+
+## What the package provides
+
+AMDconfigurations implements four core capabilities:
+
+### 1. Compute AMD curves  
+`compute_amd_curve()` calculates the Average Minimum Distance curve of a configuration.  
+The AMD curve captures how the typical nearest‑neighbour distance changes as the configuration is progressively thinned, providing a compact geometric signature.
+
+### 2. Generate synthetic configurations  
+`create_synthetic_samples()` produces synthetic point clouds under controlled geometric assumptions.  
+These synthetic configurations serve as reference models for comparison, calibration, and hypothesis testing.
+
+### 3. Estimate equivalent dispersion parameters  
+`estimate_sigma_equivalent()` extracts a single parameter summarizing the effective dispersion of a configuration, based on its AMD curve or related metrics.
+
+### 4. Assign configurations to clusters  
+`assign_clusters_best()` groups configurations according to their geometric similarity, enabling the detection of recurrent shapes or regimes.
+
+---
+
+## Conceptual workflow
+
+A typical analysis proceeds as follows:
+
+1. Represent each system or time slice as a **configuration** (a set of points in ℝⁿ).  
+2. Compute its **AMD curve**, obtaining a geometric fingerprint.  
+3. Generate **synthetic configurations** to establish baselines or null expectations.  
+4. Estimate **equivalent dispersion parameters** to compare configurations across scales.  
+5. Cluster configurations to identify **recurrence**, **transitions**, or **regimes**.  
+
+This workflow is intentionally domain‑agnostic: the same tools apply to transcriptomic states, ecological assemblages, historical polities, or financial portfolios.
+
+---
+
+## Example (minimal)
+
+```r
+library(AMDconfigurations)
+
+set.seed(123)
+points <- cbind(
+  x = rnorm(200, 0, 1),
+  y = rnorm(200, 0, 1)
+)
+
+amd <- compute_amd_curve(points)
+sigma_eq <- estimate_sigma_equivalent(amd)
+
+sigma_eq
