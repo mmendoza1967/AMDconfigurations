@@ -23,7 +23,8 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
-      AMD_RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+      # Model releases are independent of documentation-only package patches.
+      AMD_RELEASE_TAG: ${{ inputs.release_tag || 'v0.2.0' }}
     steps:
       - uses: actions/checkout@v4
       - uses: r-lib/actions/setup-pandoc@v2

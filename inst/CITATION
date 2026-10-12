@@ -24,6 +24,6 @@ bibentry(
   title = "AMDconfigurations: Geometric Analysis of Configurations in High-Dimensional Spaces",
   author = person("Manuel", "Mendoza"),
   year = "2026",
-  note = "R package version 0.2.0",
+  note = "R package version 0.2.1",
   url = "https://CRAN.R-project.org/package=AMDconfigurations"
 )
