@@ -1,5 +1,18 @@
 # Changelog
 
+## AMDconfigurations 0.2.1
+
+- Corrected the README model-manifest link for CRAN resubmission. The
+  manifest remains available at the fixed v0.2.0 URL even though the
+  external model directory is deliberately excluded from the CRAN source
+  package.
+- Updated package-version and installation references. The R
+  implementation, bundled datasets, corrected-v2 forests and confidence
+  calibrators are unchanged.
+- Kept the original Ecography DOI as a plain identifier in the README;
+  its publisher redirect returned HTTP 403 to automated URL checking.
+  The cited article and DOI have not changed.
+
 ## AMDconfigurations 0.2.0
 
 ### Optional model-assisted interpretation and applicability

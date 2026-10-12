@@ -36,14 +36,14 @@ install.packages("AMDconfigurations")
 packageVersion("AMDconfigurations")
 ```
 
-CRAN may still provide version 0.1.0 while the 0.2.0 update is under
+CRAN may still provide version 0.1.0 while the 0.2.1 update is under
 review. The diagnostics and optional reader below require version 0.2.0
 or later. For the versioned GitHub release:
 
 ``` r
 
 # install.packages("remotes")
-remotes::install_github("mmendoza1967/AMDconfigurations@v0.2.0")
+remotes::install_github("mmendoza1967/AMDconfigurations@v0.2.1")
 ```
 
 ## Core example
@@ -124,11 +124,12 @@ summary, not a rule for interpreting an entire curve.
 The base workflow above does not require a model, `ranger`, or `digest`.
 The API also accepts an explicitly provided external corrected-v2 bundle
 and its SHA-256. Download `amd_predictor_bundle_v2.rds` manually from
-the matching [GitHub
-release](https://github.com/mmendoza1967/AMDconfigurations/releases),
+the [v0.2.0 model
+release](https://github.com/mmendoza1967/AMDconfigurations/releases/tag/v0.2.0),
 then check its identity against the versioned [model
-manifest](https://mmendoza1967.github.io/AMDconfigurations/models/manifest.json).
-The model is about 83 MiB and is not part of the CRAN source package.
+manifest](https://raw.githubusercontent.com/mmendoza1967/AMDconfigurations/v0.2.0/models/manifest.json).
+The documentation-only 0.2.1 update uses that unchanged model. The model
+is about 83 MiB and is not part of the CRAN source package.
 
 ``` r
 
@@ -222,7 +223,7 @@ remains a research question.
 
 Mendoza, M. & Araújo, M. B. (2022). Biogeography of bird and mammal
 trophic structures. *Ecography*, 2022(5), e06289.
-<https://doi.org/10.1111/ecog.06289>
+<doi:10.1111/ecog.06289>.
 
 ## License
 

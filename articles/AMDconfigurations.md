@@ -236,7 +236,7 @@ manifest[c("r_version", "amdconfigurations_version", "e1071_version", "rng_kind"
 #> [1] "R version 4.6.1 (2026-06-24)"
 #> 
 #> $amdconfigurations_version
-#> [1] "0.2.0"
+#> [1] "0.2.1"
 #> 
 #> $e1071_version
 #> [1] "1.7.17"
