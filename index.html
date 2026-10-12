@@ -7,12 +7,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Geometric Analysis of Configurations in High-Dimensional Spaces • AMDconfigurations</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Geometric Analysis of Configurations in High-Dimensional Spaces">
-<meta name="description" content="Tools for analysing the geometry of configurations in high-dimensional spaces using the Average Membership Degree (AMD) framework and synthetic configuration generation. The package supports a domain-agnostic approach to studying the shape, dispersion, and internal structure of point clouds, with applications across biological and ecological datasets, including those derived from deep-time records. The AMD framework builds on the idea that strongly coupled systems may occupy a limited set of recurrent regimes in state space, producing high-occupancy regions separated by sparsely populated transitional configurations. The package focuses on detecting these concentration patterns and quantifying their geometric definition without assuming any underlying dynamical model. It provides AMD curve computation, cluster assignment, and sigma-equivalent estimation, together with S3 methods for plotting, printing, and summarising AMD and sigma-equivalent objects. Mendoza (2025) &lt;https://mmendoza1967.github.io/AMDconfigurations/&gt;.">
-<meta property="og:description" content="Tools for analysing the geometry of configurations in high-dimensional spaces using the Average Membership Degree (AMD) framework and synthetic configuration generation. The package supports a domain-agnostic approach to studying the shape, dispersion, and internal structure of point clouds, with applications across biological and ecological datasets, including those derived from deep-time records. The AMD framework builds on the idea that strongly coupled systems may occupy a limited set of recurrent regimes in state space, producing high-occupancy regions separated by sparsely populated transitional configurations. The package focuses on detecting these concentration patterns and quantifying their geometric definition without assuming any underlying dynamical model. It provides AMD curve computation, cluster assignment, and sigma-equivalent estimation, together with S3 methods for plotting, printing, and summarising AMD and sigma-equivalent objects. Mendoza (2025) &lt;https://mmendoza1967.github.io/AMDconfigurations/&gt;.">
+<meta name="description" content="Computes Average Membership Degree (AMD) from soft-membership matrices and constructs AMD curves across candidate configuration counts. The current curve backend uses repeated fuzzy c-means fits while keeping the AMD definition, membership estimation, curve construction, and final assignment as separate operations. Fitted memberships, convergence diagnostics, preprocessing transformations, seeds, row maps, and process-level reproducibility links are retained. The package reports numerical curve features but leaves their scientific interpretation to an explicitly justified analysis. The method was introduced by Mendoza and Araújo (2022) &lt;doi:10.1111/ecog.06289&gt;.">
+<meta property="og:description" content="Computes Average Membership Degree (AMD) from soft-membership matrices and constructs AMD curves across candidate configuration counts. The current curve backend uses repeated fuzzy c-means fits while keeping the AMD definition, membership estimation, curve construction, and final assignment as separate operations. Fitted memberships, convergence diagnostics, preprocessing transformations, seeds, row maps, and process-level reproducibility links are retained. The package reports numerical curve features but leaves their scientific interpretation to an explicitly justified analysis. The method was introduced by Mendoza and Araújo (2022) &lt;doi:10.1111/ecog.06289&gt;.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">AMDconfigurations</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,7 +31,9 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/AMDconfigurations.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -48,97 +50,139 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="amdconfigurations">AMDconfigurations<a class="anchor" aria-label="anchor" href="#amdconfigurations"></a>
 </h1></div>
-<p><strong>AMDconfigurations</strong> provides tools for analysing the geometry of configurations in high‑dimensional spaces through the lens of <em>Average Minimum Distance (AMD)</em> curves and synthetic configuration generation.<br>
-The package is part of a broader research program aimed at identifying <strong>recurrent geometric patterns</strong> across biological, ecological, geohistorical, and financial systems.</p>
-<p>Rather than focusing on domain‑specific variables, AMDconfigurations treats each system as a set of points in a state space and studies the <strong>shape, dispersion, and internal structure</strong> of these point clouds.<br>
-The goal is to reveal <strong>universal geometric signatures</strong> that transcend the particularities of each domain.</p>
-<hr>
 <div class="section level2">
-<h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
+<h2 id="average-membership-degree-and-amd-curves">Average Membership Degree and AMD curves<a class="anchor" aria-label="anchor" href="#average-membership-degree-and-amd-curves"></a>
 </h2>
-<p>Many complex systems—cells, ecological communities, historical polities, financial markets—can be represented as <strong>configurations of points</strong> in a multidimensional space.<br>
-Despite their differences, these systems often exhibit:</p>
-<ul>
-<li>recurrent spatial arrangements<br>
-</li>
-<li>characteristic scales of dispersion<br>
-</li>
-<li>transitions between geometric regimes<br>
-</li>
-<li>clustering patterns that reflect underlying energetic or organizational constraints</li>
-</ul>
-<p>Traditional statistical tools tend to collapse these structures into aggregate descriptors.<br>
-AMDconfigurations instead focuses on the <strong>geometry of the configuration itself</strong>, using AMD curves and related quantities as a way to quantify:</p>
-<ul>
-<li>how points are distributed<br>
-</li>
-<li>how “tight” or “spread” a configuration is<br>
-</li>
-<li>how configurations compare to synthetic or null models<br>
-</li>
-<li>how configurations cluster in configuration space</li>
-</ul>
-<p>This geometric perspective is intended to support the search for <strong>cross‑domain regularities</strong> and <strong>universal organizational principles</strong>.</p>
-<hr>
-</div>
-<div class="section level2">
-<h2 id="what-the-package-provides">What the package provides<a class="anchor" aria-label="anchor" href="#what-the-package-provides"></a>
-</h2>
-<p>AMDconfigurations implements four core capabilities:</p>
-<div class="section level3">
-<h3 id="id_1-compute-amd-curves">1. Compute AMD curves<a class="anchor" aria-label="anchor" href="#id_1-compute-amd-curves"></a>
-</h3>
-<p><code><a href="reference/compute_amd_curve.html">compute_amd_curve()</a></code> calculates the Average Minimum Distance curve of a configuration.<br>
-The AMD curve captures how the typical nearest‑neighbour distance changes as the configuration is progressively thinned, providing a compact geometric signature.</p>
-</div>
-<div class="section level3">
-<h3 id="id_2-generate-synthetic-configurations">2. Generate synthetic configurations<a class="anchor" aria-label="anchor" href="#id_2-generate-synthetic-configurations"></a>
-</h3>
-<p><code><a href="reference/create_synthetic_samples.html">create_synthetic_samples()</a></code> produces synthetic point clouds under controlled geometric assumptions.<br>
-These synthetic configurations serve as reference models for comparison, calibration, and hypothesis testing.</p>
-</div>
-<div class="section level3">
-<h3 id="id_3-estimate-equivalent-dispersion-parameters">3. Estimate equivalent dispersion parameters<a class="anchor" aria-label="anchor" href="#id_3-estimate-equivalent-dispersion-parameters"></a>
-</h3>
-<p><code><a href="reference/estimate_sigma_equivalent.html">estimate_sigma_equivalent()</a></code> extracts a single parameter summarizing the effective dispersion of a configuration, based on its AMD curve or related metrics.</p>
-</div>
-<div class="section level3">
-<h3 id="id_4-assign-configurations-to-clusters">4. Assign configurations to clusters<a class="anchor" aria-label="anchor" href="#id_4-assign-configurations-to-clusters"></a>
-</h3>
-<p><code><a href="reference/assign_clusters_best.html">assign_clusters_best()</a></code> groups configurations according to their geometric similarity, enabling the detection of recurrent shapes or regimes.</p>
-<hr>
-</div>
-</div>
-<div class="section level2">
-<h2 id="conceptual-workflow">Conceptual workflow<a class="anchor" aria-label="anchor" href="#conceptual-workflow"></a>
-</h2>
-<p>A typical analysis proceeds as follows:</p>
+<p><code>AMDconfigurations</code> implements the computational core of Average Membership Degree (AMD). The package separates four operations that should not be confused:</p>
 <ol style="list-style-type: decimal">
-<li>Represent each system or time slice as a <strong>configuration</strong> (a set of points in ℝⁿ).<br>
-</li>
-<li>Compute its <strong>AMD curve</strong>, obtaining a geometric fingerprint.<br>
-</li>
-<li>Generate <strong>synthetic configurations</strong> to establish baselines or null expectations.<br>
-</li>
-<li>Estimate <strong>equivalent dispersion parameters</strong> to compare configurations across scales.<br>
-</li>
-<li>Cluster configurations to identify <strong>recurrence</strong>, <strong>transitions</strong>, or <strong>regimes</strong>.</li>
+<li>
+<code><a href="reference/amd_score.html">amd_score()</a></code> evaluates AMD from an existing soft-membership matrix.</li>
+<li>
+<code><a href="reference/compute_amd_curve.html">compute_amd_curve()</a></code> estimates one membership matrix for each candidate number of configurations and evaluates AMD on it.</li>
+<li>The user inspects and justifies the relevant resolution from the complete curve.</li>
+<li>
+<code><a href="reference/assign_configurations.html">assign_configurations()</a></code> extracts the exact stored fit for that explicitly selected resolution.</li>
 </ol>
-<p>This workflow is intentionally domain‑agnostic: the same tools apply to transcriptomic states, ecological assemblages, historical polities, or financial portfolios.</p>
-<hr>
+<p>AMD is defined independently of fuzzy c-means. Fuzzy c-means is the current membership-estimation backend used to construct curves.</p>
+<p>Users moving from public version 0.1.0 should read <a href="inst/MIGRATION.html">inst/MIGRATION.md</a>. Saved 0.1.0 curve objects remain inspectable, but they do not contain enough information to reconstruct the new minimum-objective primary curve.</p>
 </div>
 <div class="section level2">
-<h2 id="example-minimal">Example (minimal)<a class="anchor" aria-label="anchor" href="#example-minimal"></a>
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>```r library(AMDconfigurations)</p>
-<p>set.seed(123) points &lt;- cbind( x = rnorm(200, 0, 1), y = rnorm(200, 0, 1) )</p>
-<p>amd &lt;- compute_amd_curve(points) sigma_eq &lt;- estimate_sigma_equivalent(amd)</p>
-<p>sigma_eq</p>
+<p>Install the released package from CRAN:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"AMDconfigurations"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"AMDconfigurations"</span><span class="op">)</span></span></code></pre></div>
+<p>CRAN may still provide version 0.1.0 while the 0.2.0 update is under review. The diagnostics and optional reader below require version 0.2.0 or later. For the versioned GitHub release:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mmendoza1967/AMDconfigurations@v0.2.0"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="core-example">Core example<a class="anchor" aria-label="anchor" href="#core-example"></a>
+</h2>
+<p>The example below has three known synthetic groups. The known value is used only to demonstrate explicit extraction; real analyses must justify <code>c</code> from the observed curve and supporting diagnostics.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mmendoza1967/AMDconfigurations" class="external-link">AMDconfigurations</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8301</span><span class="op">)</span></span>
+<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">120</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">120</span>, mean <span class="op">=</span> <span class="fl">4</span>, sd <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">120</span>, mean <span class="op">=</span> <span class="fl">8</span>, sd <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">candidate_c</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">:</span><span class="fl">6</span></span>
+<span><span class="va">starts</span> <span class="op">&lt;-</span> <span class="fl">5L</span></span>
+<span><span class="va">seed_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/outer.html" class="external-link">outer</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">starts</span><span class="op">)</span>,</span>
+<span>  <span class="va">candidate_c</span>,</span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">start</span>, <span class="va">c</span><span class="op">)</span> <span class="fl">100000L</span> <span class="op">+</span> <span class="fl">1000L</span> <span class="op">*</span> <span class="va">c</span> <span class="op">+</span> <span class="va">start</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">seed_matrix</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">candidate_c</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">curve</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/compute_amd_curve.html">compute_amd_curve</a></span><span class="op">(</span></span>
+<span>  <span class="va">X</span>,</span>
+<span>  its <span class="op">=</span> <span class="va">starts</span>,</span>
+<span>  nin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">candidate_c</span><span class="op">)</span>,</span>
+<span>  nsp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">candidate_c</span><span class="op">)</span>,</span>
+<span>  seeds <span class="op">=</span> <span class="va">seed_matrix</span>,</span>
+<span>  iter_max <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">curve</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Explicit illustrative choice, known from data generation in this example.</span></span>
+<span><span class="va">chosen_c</span> <span class="op">&lt;-</span> <span class="fl">3L</span></span>
+<span><span class="va">assigned</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/assign_configurations.html">assign_configurations</a></span><span class="op">(</span><span class="va">curve</span>, c <span class="op">=</span> <span class="va">chosen_c</span><span class="op">)</span></span></code></pre></div>
+<p><code>curve$c_peak</code> and its compatibility alias <code>curve$c_opt</code> are numerical summaries, not automatic scientific decisions. A maximum at the right boundary does not establish a number of groups. An internal peak must be interpreted in the context of the subsequent curve, possible plateaus, stability and the examined range.</p>
+</div>
+<div class="section level2">
+<h2 id="curve-and-stored-partition-diagnostics">Curve and stored-partition diagnostics<a class="anchor" aria-label="anchor" href="#curve-and-stored-partition-diagnostics"></a>
+</h2>
+<p>Version 0.2.0 adds a descriptive operation:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">diagnostics</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/diagnose_amd.html">diagnose_amd</a></span><span class="op">(</span><span class="va">curve</span><span class="op">)</span></span>
+<span><span class="va">diagnostics</span><span class="op">$</span><span class="va">candidates</span>    <span class="co"># Curve neighbours and membership/size summaries</span></span>
+<span><span class="va">diagnostics</span><span class="op">$</span><span class="va">groups</span>        <span class="co"># Per-group hard counts and soft membership masses</span></span>
+<span><span class="va">diagnostics</span><span class="op">$</span><span class="va">transitions</span>   <span class="co"># Label-invariant comparisons of successive partitions</span></span>
+<span><span class="va">diagnostics</span><span class="op">$</span><span class="va">dictionary</span>    <span class="co"># Definitions and scales</span></span>
+<span><span class="va">diagnostics</span><span class="op">$</span><span class="va">unavailable</span>   <span class="co"># What this operation does not measure</span></span></code></pre></div>
+<p>This operation reads exactly the fits already stored in <code>curve</code>; it does not fit them again or choose <code>K</code>. It needs no original data and constructs no sample distance matrix. Winning membership, entropy and ambiguity describe memberships, not density or geometric compactness. ARI and NMI describe agreement between successive partitions, not stability under resampling. The default top-two gap of 0.1 is an explicit descriptive convention, not a universal threshold for structure. A strict local-maximum flag is likewise only a numerical summary, not a rule for interpreting an entire curve.</p>
+</div>
+<div class="section level2">
+<h2 id="optional-model-assisted-reader">Optional model-assisted reader<a class="anchor" aria-label="anchor" href="#optional-model-assisted-reader"></a>
+</h2>
+<p>The base workflow above does not require a model, <code>ranger</code>, or <code>digest</code>. The API also accepts an explicitly provided external corrected-v2 bundle and its SHA-256. Download <code>amd_predictor_bundle_v2.rds</code> manually from the matching <a href="https://github.com/mmendoza1967/AMDconfigurations/releases" class="external-link">GitHub release</a>, then check its identity against the versioned <a href="models/manifest.json">model manifest</a>. The model is about 83 MiB and is not part of the CRAN source package.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Optional dependencies; install them only if using the reader.</span></span>
+<span><span class="co"># install.packages(c("ranger", "digest"))</span></span>
+<span><span class="va">bundle_path</span> <span class="op">&lt;-</span> <span class="st">"path/to/amd_predictor_bundle_v2.rds"</span></span>
+<span><span class="va">bundle_sha256</span> <span class="op">&lt;-</span> <span class="st">"961f7ab814b41414f9342398726cac8058a65095d98dc18966c6e316b665c630"</span></span>
+<span><span class="va">reader</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_amd_predictor.html">load_amd_predictor</a></span><span class="op">(</span><span class="va">bundle_path</span>, sha256 <span class="op">=</span> <span class="va">bundle_sha256</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/predict_amd.html">predict_amd</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">reader</span>, seed <span class="op">=</span> <span class="fl">123</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">proposed_k</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">reliability</span></span>
+<span></span>
+<span><span class="co"># An existing curve is reused only if it matches the frozen reader settings:</span></span>
+<span><span class="co"># c=2:14, 20 starts, m=2, iter_max=2000, no scaling or preselection.</span></span>
+<span><span class="co"># result &lt;- predict_amd(X, reader, curve = compatible_curve, seed = 123)</span></span></code></pre></div>
+<p>There are no automatic downloads and no forest training. A supplied compatible curve avoids repeating its principal fits; the reader still performs the five computational restarts per c required by its feature contract. These restarts are not resampling stability. The output keeps the numerical curve maximum, the assisted proposal and the user’s scientific choice separate.</p>
+<p>The reader’s K is the numerically resolved density-mode count used as the simulation reference, not necessarily the number of generating components. AMD itself does not estimate a density. Off-grid proposals are explicitly labelled exploratory, not just proposals with an unavailable certainty.</p>
+<p>Reliability concerns correctness of the emitted one/several-modes decision and correctness of exact K, separately; it is not directly a probability that groups exist. The corrected forests’ unchanged historical calibrators were reassessed retrospectively on the previously examined final bank. This does not create a new prospective validation. Default certainty reporting is restricted to N={150,600}, D={2,6,15}, assessed outputs and missingness patterns. The zero-variance fraction was always zero and minimum covariance-rank fraction always one in training, so their value columns were omitted by the frozen models. Departures suppress certainty; no trees are refitted to absorb them. Matching N and D does not certify new-data geometry. Interpolation is not assumed to preserve reliability. Historical v1 bundles remain frozen study artefacts and are deliberately rejected by the corrected extractor.</p>
+<p>The descriptors include sample distances and covariance summaries. A working-memory estimate is checked before any new fit; the default limit is 512 MiB for descriptor work, excluding the loaded forests. This is a risk guard, not a guaranteed process-memory bound or runtime limit. Partition distances use all rows. As in the frozen feature definition, global distance summaries use a seeded sample of 2000 rows when N exceeds 2000; the actual count and distinct exact/subsampled flags are reported. This occurs only outside the assessed N grid. No additional approximation bypasses the guard. The manual curve and <code><a href="reference/diagnose_amd.html">diagnose_amd()</a></code> remain available without this quadratic operation. Certainty combines several decision descriptors; it is not simply the fraction of forests that agree and need not increase with agreement alone.</p>
+</div>
+<div class="section level2">
+<h2 id="reproducibility">Reproducibility<a class="anchor" aria-label="anchor" href="#reproducibility"></a>
+</h2>
+<p>Every curve records its seeds, convergence diagnostics, retained variables, scaling transformation and row map. It also contains a <code>manifest_id</code> linking it to the process-level environment returned by:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">manifest</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/amd_reproducibility_manifest.html">amd_reproducibility_manifest</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">curve</span><span class="op">$</span><span class="va">manifest_id</span>, <span class="va">manifest</span><span class="op">$</span><span class="va">manifest_id</span><span class="op">)</span></span></code></pre></div>
+<p>Immediately after each curve, retrieve <code><a href="reference/amd_reproducibility_manifest.html">amd_reproducibility_manifest()</a></code> and save one copy of every distinct <code>manifest_id</code>; curves sharing an identifier can share that copy. This also covers the uncommon case in which <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">RNGkind()</a></code> changes within one R process. Named seed matrices are recommended because they preserve the seeds associated with each <code>(start, c)</code> pair when the candidate range is extended.</p>
+</div>
+<div class="section level2">
+<h2 id="interpretation-limits">Interpretation limits<a class="anchor" aria-label="anchor" href="#interpretation-limits"></a>
+</h2>
+<p>The computational core computes AMD and preserves fitted objects and diagnostics. It does not provide a universal automatic rule for reading peaks, plateaus or sustained declines. Whether AMD height or peak morphology measures compactness, separation or configuration definition remains a research question.</p>
+</div>
+<div class="section level2">
+<h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
+</h2>
+<p>Mendoza, M. &amp; Araújo, M. B. (2022). Biogeography of bird and mammal trophic structures. <em>Ecography</em>, 2022(5), e06289. <a href="https://doi.org/10.1111/ecog.06289" class="external-link uri">https://doi.org/10.1111/ecog.06289</a></p>
+</div>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
+<p>Package code and the optional synthetic-data model bundle: MIT License. The transcriptomic example dataset retains its separately attributed CC BY 4.0 licence; see <a href="inst/COPYRIGHTS">inst/COPYRIGHTS</a> and the dataset help.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=AMDconfigurations" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/mmendoza1967/AMDconfigurations/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/mmendoza1967/AMDconfigurations/issues" class="external-link">Report a bug</a></li>
 </ul>
@@ -178,7 +222,7 @@ These synthetic configurations serve as reference models for comparison, calibra
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

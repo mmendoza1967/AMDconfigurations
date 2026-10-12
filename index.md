@@ -1,111 +1,233 @@
 # AMDconfigurations
 
-**AMDconfigurations** provides tools for analysing the geometry of
-configurations in high‑dimensional spaces through the lens of *Average
-Minimum Distance (AMD)* curves and synthetic configuration generation.  
-The package is part of a broader research program aimed at identifying
-**recurrent geometric patterns** across biological, ecological,
-geohistorical, and financial systems.
+## Average Membership Degree and AMD curves
 
-Rather than focusing on domain‑specific variables, AMDconfigurations
-treats each system as a set of points in a state space and studies the
-**shape, dispersion, and internal structure** of these point clouds.  
-The goal is to reveal **universal geometric signatures** that transcend
-the particularities of each domain.
+`AMDconfigurations` implements the computational core of Average
+Membership Degree (AMD). The package separates four operations that
+should not be confused:
 
-------------------------------------------------------------------------
+1.  [`amd_score()`](https://mmendoza1967.github.io/AMDconfigurations/reference/amd_score.md)
+    evaluates AMD from an existing soft-membership matrix.
+2.  [`compute_amd_curve()`](https://mmendoza1967.github.io/AMDconfigurations/reference/compute_amd_curve.md)
+    estimates one membership matrix for each candidate number of
+    configurations and evaluates AMD on it.
+3.  The user inspects and justifies the relevant resolution from the
+    complete curve.
+4.  [`assign_configurations()`](https://mmendoza1967.github.io/AMDconfigurations/reference/assign_configurations.md)
+    extracts the exact stored fit for that explicitly selected
+    resolution.
 
-## Motivation
+AMD is defined independently of fuzzy c-means. Fuzzy c-means is the
+current membership-estimation backend used to construct curves.
 
-Many complex systems—cells, ecological communities, historical polities,
-financial markets—can be represented as **configurations of points** in
-a multidimensional space.  
-Despite their differences, these systems often exhibit:
+Users moving from public version 0.1.0 should read
+[inst/MIGRATION.md](https://mmendoza1967.github.io/AMDconfigurations/inst/MIGRATION.md).
+Saved 0.1.0 curve objects remain inspectable, but they do not contain
+enough information to reconstruct the new minimum-objective primary
+curve.
 
-- recurrent spatial arrangements  
-- characteristic scales of dispersion  
-- transitions between geometric regimes  
-- clustering patterns that reflect underlying energetic or
-  organizational constraints
+## Installation
 
-Traditional statistical tools tend to collapse these structures into
-aggregate descriptors.  
-AMDconfigurations instead focuses on the **geometry of the configuration
-itself**, using AMD curves and related quantities as a way to quantify:
+Install the released package from CRAN:
 
-- how points are distributed  
-- how “tight” or “spread” a configuration is  
-- how configurations compare to synthetic or null models  
-- how configurations cluster in configuration space
+``` r
 
-This geometric perspective is intended to support the search for
-**cross‑domain regularities** and **universal organizational
-principles**.
+install.packages("AMDconfigurations")
+packageVersion("AMDconfigurations")
+```
 
-------------------------------------------------------------------------
+CRAN may still provide version 0.1.0 while the 0.2.0 update is under
+review. The diagnostics and optional reader below require version 0.2.0
+or later. For the versioned GitHub release:
 
-## What the package provides
+``` r
 
-AMDconfigurations implements four core capabilities:
+# install.packages("remotes")
+remotes::install_github("mmendoza1967/AMDconfigurations@v0.2.0")
+```
 
-### 1. Compute AMD curves
+## Core example
 
-[`compute_amd_curve()`](https://mmendoza1967.github.io/AMDconfigurations/reference/compute_amd_curve.md)
-calculates the Average Minimum Distance curve of a configuration.  
-The AMD curve captures how the typical nearest‑neighbour distance
-changes as the configuration is progressively thinned, providing a
-compact geometric signature.
+The example below has three known synthetic groups. The known value is
+used only to demonstrate explicit extraction; real analyses must justify
+`c` from the observed curve and supporting diagnostics.
 
-### 2. Generate synthetic configurations
+``` r
 
-[`create_synthetic_samples()`](https://mmendoza1967.github.io/AMDconfigurations/reference/create_synthetic_samples.md)
-produces synthetic point clouds under controlled geometric
-assumptions.  
-These synthetic configurations serve as reference models for comparison,
-calibration, and hypothesis testing.
+library(AMDconfigurations)
 
-### 3. Estimate equivalent dispersion parameters
+set.seed(8301)
+X <- rbind(
+  matrix(rnorm(120, mean = 0, sd = 0.7), ncol = 3),
+  matrix(rnorm(120, mean = 4, sd = 0.7), ncol = 3),
+  matrix(rnorm(120, mean = 8, sd = 0.7), ncol = 3)
+)
 
-[`estimate_sigma_equivalent()`](https://mmendoza1967.github.io/AMDconfigurations/reference/estimate_sigma_equivalent.md)
-extracts a single parameter summarizing the effective dispersion of a
-configuration, based on its AMD curve or related metrics.
+candidate_c <- 2:6
+starts <- 5L
+seed_matrix <- outer(
+  seq_len(starts),
+  candidate_c,
+  function(start, c) 100000L + 1000L * c + start
+)
+colnames(seed_matrix) <- as.character(candidate_c)
 
-### 4. Assign configurations to clusters
+curve <- compute_amd_curve(
+  X,
+  its = starts,
+  nin = min(candidate_c),
+  nsp = max(candidate_c),
+  seeds = seed_matrix,
+  iter_max = 1000,
+  verbose = FALSE
+)
 
-[`assign_clusters_best()`](https://mmendoza1967.github.io/AMDconfigurations/reference/assign_clusters_best.md)
-groups configurations according to their geometric similarity, enabling
-the detection of recurrent shapes or regimes.
+plot(curve)
 
-------------------------------------------------------------------------
+# Explicit illustrative choice, known from data generation in this example.
+chosen_c <- 3L
+assigned <- assign_configurations(curve, c = chosen_c)
+```
 
-## Conceptual workflow
+`curve$c_peak` and its compatibility alias `curve$c_opt` are numerical
+summaries, not automatic scientific decisions. A maximum at the right
+boundary does not establish a number of groups. An internal peak must be
+interpreted in the context of the subsequent curve, possible plateaus,
+stability and the examined range.
 
-A typical analysis proceeds as follows:
+## Curve and stored-partition diagnostics
 
-1.  Represent each system or time slice as a **configuration** (a set of
-    points in ℝⁿ).  
-2.  Compute its **AMD curve**, obtaining a geometric fingerprint.  
-3.  Generate **synthetic configurations** to establish baselines or null
-    expectations.  
-4.  Estimate **equivalent dispersion parameters** to compare
-    configurations across scales.  
-5.  Cluster configurations to identify **recurrence**, **transitions**,
-    or **regimes**.
+Version 0.2.0 adds a descriptive operation:
 
-This workflow is intentionally domain‑agnostic: the same tools apply to
-transcriptomic states, ecological assemblages, historical polities, or
-financial portfolios.
+``` r
 
-------------------------------------------------------------------------
+diagnostics <- diagnose_amd(curve)
+diagnostics$candidates    # Curve neighbours and membership/size summaries
+diagnostics$groups        # Per-group hard counts and soft membership masses
+diagnostics$transitions   # Label-invariant comparisons of successive partitions
+diagnostics$dictionary    # Definitions and scales
+diagnostics$unavailable   # What this operation does not measure
+```
 
-## Example (minimal)
+This operation reads exactly the fits already stored in `curve`; it does
+not fit them again or choose `K`. It needs no original data and
+constructs no sample distance matrix. Winning membership, entropy and
+ambiguity describe memberships, not density or geometric compactness.
+ARI and NMI describe agreement between successive partitions, not
+stability under resampling. The default top-two gap of 0.1 is an
+explicit descriptive convention, not a universal threshold for
+structure. A strict local-maximum flag is likewise only a numerical
+summary, not a rule for interpreting an entire curve.
 
-\`\`\`r library(AMDconfigurations)
+## Optional model-assisted reader
 
-set.seed(123) points \<- cbind( x = rnorm(200, 0, 1), y = rnorm(200,
-0, 1) )
+The base workflow above does not require a model, `ranger`, or `digest`.
+The API also accepts an explicitly provided external corrected-v2 bundle
+and its SHA-256. Download `amd_predictor_bundle_v2.rds` manually from
+the matching [GitHub
+release](https://github.com/mmendoza1967/AMDconfigurations/releases),
+then check its identity against the versioned [model
+manifest](https://mmendoza1967.github.io/AMDconfigurations/models/manifest.json).
+The model is about 83 MiB and is not part of the CRAN source package.
 
-amd \<- compute_amd_curve(points) sigma_eq \<-
-estimate_sigma_equivalent(amd)
+``` r
 
-sigma_eq
+# Optional dependencies; install them only if using the reader.
+# install.packages(c("ranger", "digest"))
+bundle_path <- "path/to/amd_predictor_bundle_v2.rds"
+bundle_sha256 <- "961f7ab814b41414f9342398726cac8058a65095d98dc18966c6e316b665c630"
+reader <- load_amd_predictor(bundle_path, sha256 = bundle_sha256)
+result <- predict_amd(X, reader, seed = 123, verbose = FALSE)
+plot(result)
+result$proposed_k
+result$reliability
+
+# An existing curve is reused only if it matches the frozen reader settings:
+# c=2:14, 20 starts, m=2, iter_max=2000, no scaling or preselection.
+# result <- predict_amd(X, reader, curve = compatible_curve, seed = 123)
+```
+
+There are no automatic downloads and no forest training. A supplied
+compatible curve avoids repeating its principal fits; the reader still
+performs the five computational restarts per c required by its feature
+contract. These restarts are not resampling stability. The output keeps
+the numerical curve maximum, the assisted proposal and the user’s
+scientific choice separate.
+
+The reader’s K is the numerically resolved density-mode count used as
+the simulation reference, not necessarily the number of generating
+components. AMD itself does not estimate a density. Off-grid proposals
+are explicitly labelled exploratory, not just proposals with an
+unavailable certainty.
+
+Reliability concerns correctness of the emitted one/several-modes
+decision and correctness of exact K, separately; it is not directly a
+probability that groups exist. The corrected forests’ unchanged
+historical calibrators were reassessed retrospectively on the previously
+examined final bank. This does not create a new prospective validation.
+Default certainty reporting is restricted to N={150,600}, D={2,6,15},
+assessed outputs and missingness patterns. The zero-variance fraction
+was always zero and minimum covariance-rank fraction always one in
+training, so their value columns were omitted by the frozen models.
+Departures suppress certainty; no trees are refitted to absorb them.
+Matching N and D does not certify new-data geometry. Interpolation is
+not assumed to preserve reliability. Historical v1 bundles remain frozen
+study artefacts and are deliberately rejected by the corrected
+extractor.
+
+The descriptors include sample distances and covariance summaries. A
+working-memory estimate is checked before any new fit; the default limit
+is 512 MiB for descriptor work, excluding the loaded forests. This is a
+risk guard, not a guaranteed process-memory bound or runtime limit.
+Partition distances use all rows. As in the frozen feature definition,
+global distance summaries use a seeded sample of 2000 rows when N
+exceeds 2000; the actual count and distinct exact/subsampled flags are
+reported. This occurs only outside the assessed N grid. No additional
+approximation bypasses the guard. The manual curve and
+[`diagnose_amd()`](https://mmendoza1967.github.io/AMDconfigurations/reference/diagnose_amd.md)
+remain available without this quadratic operation. Certainty combines
+several decision descriptors; it is not simply the fraction of forests
+that agree and need not increase with agreement alone.
+
+## Reproducibility
+
+Every curve records its seeds, convergence diagnostics, retained
+variables, scaling transformation and row map. It also contains a
+`manifest_id` linking it to the process-level environment returned by:
+
+``` r
+
+manifest <- amd_reproducibility_manifest()
+identical(curve$manifest_id, manifest$manifest_id)
+```
+
+Immediately after each curve, retrieve
+[`amd_reproducibility_manifest()`](https://mmendoza1967.github.io/AMDconfigurations/reference/amd_reproducibility_manifest.md)
+and save one copy of every distinct `manifest_id`; curves sharing an
+identifier can share that copy. This also covers the uncommon case in
+which [`RNGkind()`](https://rdrr.io/r/base/Random.html) changes within
+one R process. Named seed matrices are recommended because they preserve
+the seeds associated with each `(start, c)` pair when the candidate
+range is extended.
+
+## Interpretation limits
+
+The computational core computes AMD and preserves fitted objects and
+diagnostics. It does not provide a universal automatic rule for reading
+peaks, plateaus or sustained declines. Whether AMD height or peak
+morphology measures compactness, separation or configuration definition
+remains a research question.
+
+## Reference
+
+Mendoza, M. & Araújo, M. B. (2022). Biogeography of bird and mammal
+trophic structures. *Ecography*, 2022(5), e06289.
+<https://doi.org/10.1111/ecog.06289>
+
+## License
+
+Package code and the optional synthetic-data model bundle: MIT License.
+The transcriptomic example dataset retains its separately attributed CC
+BY 4.0 licence; see
+[inst/COPYRIGHTS](https://mmendoza1967.github.io/AMDconfigurations/inst/COPYRIGHTS)
+and the dataset help.
