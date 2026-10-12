@@ -1,0 +1,73 @@
+on:
+  push:
+    branches: ['release/0.2.0']
+  workflow_dispatch:
+
+name: Checked source release
+
+permissions: read-all
+
+jobs:
+  source-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+      _R_CHECK_CRAN_INCOMING_: false
+      _R_CHECK_FORCE_SUGGESTS_: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::jsonlite
+          needs: check
+      - name: Build and check the exact source archive with current R
+        shell: Rscript {0}
+        run: |
+          stopifnot(getRversion() >= "4.6.1")
+          source <- Sys.getenv("GITHUB_WORKSPACE")
+          work <- file.path(Sys.getenv("RUNNER_TEMP"), "amd-source-release")
+          dir.create(work)
+          setwd(work)
+          r <- file.path(R.home("bin"), "R")
+          built <- system2(r, c("CMD", "build", shQuote(source)),
+                           stdout = "build.log", stderr = "build.log")
+          cat(readLines("build.log", warn = FALSE), sep = "\n")
+          stopifnot(built == 0L)
+          archive <- file.path(work, "AMDconfigurations_0.2.0.tar.gz")
+          stopifnot(file.exists(archive))
+          checked <- system2(r, c("CMD", "check", "--as-cran", "--no-manual",
+                                 shQuote(archive)),
+                             stdout = "check.log", stderr = "check.log")
+          cat(readLines("check.log", warn = FALSE), sep = "\n")
+          check_log <- readLines("AMDconfigurations.Rcheck/00check.log", warn = FALSE)
+          stopifnot(checked == 0L, any(grepl("^Status: OK$", check_log)))
+          record <- list(
+            schema = "amd_checked_source_archive_v1",
+            commit = Sys.getenv("GITHUB_SHA"), R = R.version.string,
+            archive = basename(archive), bytes = file.info(archive)$size,
+            sha256 = digest::digest(file = archive, algo = "sha256"),
+            build = "R CMD build", check = "R CMD check --as-cran --no-manual",
+            status = "Status: OK", incoming_network_check = FALSE,
+            external_model = "not provided; integration is checked separately"
+          )
+          jsonlite::write_json(record, "source-archive.json", pretty = TRUE, auto_unbox = TRUE)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: current-R-source-release
+          path: |
+            ${{ runner.temp }}/amd-source-release/AMDconfigurations_0.2.0.tar.gz
+            ${{ runner.temp }}/amd-source-release/source-archive.json
+            ${{ runner.temp }}/amd-source-release/build.log
+            ${{ runner.temp }}/amd-source-release/check.log
+            ${{ runner.temp }}/amd-source-release/AMDconfigurations.Rcheck/00check.log
+            ${{ runner.temp }}/amd-source-release/AMDconfigurations.Rcheck/tests/testthat.Rout
+          if-no-files-found: error
+          retention-days: 90

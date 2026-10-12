@@ -5,3 +5,7 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^cran-comments\.md$
+^models$
+^\.git$
+^\.gitattributes$

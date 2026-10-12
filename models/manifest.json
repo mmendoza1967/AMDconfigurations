@@ -1,0 +1,38 @@
+{
+  "schema": "amd_public_model_manifest_v1",
+  "file": "amd_predictor_bundle_v2.rds",
+  "bytes": 86675904,
+  "sha256": "961f7ab814b41414f9342398726cac8058a65095d98dc18966c6e316b665c630",
+  "bundle_schema": "amd_predictor_bundle_v2",
+  "feature_contract": "amd_modal_features_left_pair_v2",
+  "created_utc": "2026-10-12 09:56:17 UTC",
+  "bundle_assembly_package_version": "0.2.0.9014",
+  "compatible_package_release": "0.2.0",
+  "resolved_target": "numerically_resolved_density_mode_count",
+  "forest_seeds": [101, 202, 303, 404, 505],
+  "trees_per_forest": 1000,
+  "raw_predictors": 231,
+  "processed_predictors": 268,
+  "ranger_version_used": "0.18.0",
+  "principal_curve": {
+    "c": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    "starts_per_c": 20,
+    "computational_refits_per_c": 5,
+    "m": 2,
+    "iter_max": 2000,
+    "scale_data": false,
+    "variable_preselection": false
+  },
+  "confidence": {
+    "assessment": "retrospective_transfer_on_previously_examined_final_bank",
+    "calibrators_refitted": false,
+    "numerical_N_grid": [150, 600],
+    "numerical_D_grid": [2, 6, 15],
+    "observed_output_support": [1, 2, 3, 4, 5, 6, 7, 8],
+    "geometry_certified_by_grid_membership": false,
+    "universal_reliability_claimed": false
+  },
+  "license": "MIT",
+  "copyright_holder": "Manuel Mendoza",
+  "historical_study_reader_replaced": false
+}

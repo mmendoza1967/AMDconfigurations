@@ -2,7 +2,7 @@
 % Please edit documentation in R/compute_amd_curve.R
 \name{compute_amd_curve}
 \alias{compute_amd_curve}
-\title{Compute the AMD curve across a range of cluster numbers}
+\title{Compute an Average Membership Degree (AMD) curve}
 \usage{
 compute_amd_curve(
   data,
@@ -20,60 +20,104 @@ compute_amd_curve(
 )
 }
 \arguments{
-\item{data}{A numeric matrix or data frame of samples (rows) × features (columns).}
+\item{data}{Numeric matrix or data frame. Rows are observations and columns
+are variables. Rows with missing values are removed with a warning and
+recorded in the returned row map.}
 
-\item{its}{Number of random initialisations per value of \code{k}.}
+\item{its}{Positive integer number of random starts for every candidate \code{c}.}
 
-\item{nin}{Minimum number of clusters to evaluate.}
+\item{nin}{Minimum candidate number of configurations. Must be at least 2.}
 
-\item{nsp}{Maximum number of clusters to evaluate.}
+\item{nsp}{Maximum candidate number of configurations.}
 
-\item{seeds}{Optional numeric vector of seeds for deterministic behaviour.
-Must have length \code{its * (nsp - nin + 1)}. If \code{NULL}, random seeds are drawn.}
+\item{seeds}{Optional positive integer vector or matrix. Vectors retain the
+historical start-major order; unused trailing values are ignored. If
+\code{NULL}, seeds are sampled from the caller's active random-number generator
+and advance its state. A matrix must have one row per start and
+uniquely named columns for every evaluated \code{c}; this form preserves the
+seeds of common candidates when the upper search limit is extended.}
 
-\item{verbose}{Logical; print progress messages.}
+\item{verbose}{Logical; print progress information when \code{TRUE}.}
 
-\item{plot_curve}{Logical; if \code{TRUE}, plot the AMD curve.}
+\item{plot_curve}{Logical; plot the primary AMD curve when \code{TRUE}.}
 
-\item{open_device}{Logical; if \code{TRUE}, open a new graphics device for the plot.}
+\item{open_device}{Logical; when \code{plot_curve = TRUE}, open a new graphics
+device before plotting. The default is \code{TRUE} for compatibility with the
+public 0.1.0 function. It has no effect when \code{plot_curve = FALSE}.}
 
-\item{scale_data}{Logical; if \code{TRUE}, standardise features before clustering.}
+\item{scale_data}{Logical; standardize variables before fitting.}
 
-\item{iter_max}{Maximum number of iterations for fuzzy c-means.}
+\item{iter_max}{Positive integer maximum number of fuzzy c-means iterations.}
 
-\item{m}{Fuzziness parameter for fuzzy c-means (default 2).}
+\item{m}{Fuzziness parameter; must be greater than one.}
 
-\item{preselect_top_sd}{Optional integer; if provided, only the top-SD features
-are retained before clustering (useful for very high-dimensional data).}
+\item{preselect_top_sd}{Optional positive integer. If supplied, retain only
+the variables with the largest standard deviations before optional
+scaling. Retained variables are ordered by decreasing standard deviation;
+their original indices and names are recorded in \code{settings}.}
 }
 \value{
-A list with components:
-\describe{
-\item{k_opt}{The optimal number of clusters (maximising AMD peak).}
-\item{max}{Vector of AMD peak values for each \code{k}.}
-\item{mean}{Vector of mean AMD values across repetitions.}
-\item{raw}{Matrix of AMD values (rows = repetitions, columns = \code{k}).}
-}
+An object of class \code{"amd_curve"}. \code{schema_version} identifies the
+public object layout. The primary \code{curve} contains AMD
+values from the minimum-objective converged fit at each \code{c}. Components
+\code{mean}, \code{max}, and \code{raw} retain the historical restart summaries for
+diagnostics and compatibility. These historical summaries include all
+starts, including nonconverged starts, and are not the primary curve.
+\code{selected_fits} contains the exact fitted
+memberships that produced the primary curve. \code{complete_rows} and
+\code{omitted_rows} map the fitted observations back to the input rows. The
+\code{settings} component records the input and retained variables and the
+exact centering and scaling vectors used to construct the fitted data.
+\code{manifest_id} links the curve to its process-level reproducibility
+manifest. Additional public components are \code{c_peak}, its historical alias
+\code{c_opt}, \code{peak_at_boundary}, the per-start \code{objectives}, \code{iterations} and
+\code{converged} matrices, selected-start diagnostics, the seed matrix,
+\code{coordinates} (the selected membership matrix at \code{c_peak}), \code{backend}, and
+\code{selection_rule}. \code{selected_fit} is the element of \code{selected_fits}
+corresponding to \code{c_peak}.
 }
 \description{
-This function computes the Average Membership Deviation (AMD) curve for
-fuzzy c-means clustering across a sequence of cluster numbers \code{k}.
-For each \code{k}, multiple random initialisations are performed and the
-AMD value is computed as:
+For every candidate number of configurations, this function runs fuzzy
+c-means from several random initializations. Random starts are computational
+attempts to estimate the same solution, not data replicates. Consequently,
+the fit with the smallest fuzzy c-means objective among the converged starts
+supplies the membership matrix evaluated by \code{amd_score()} at each \code{c}.
 }
 \details{
-\deqn{ \mathrm{AMD}(k) = \mathrm{mean}(\max_i u_{i}) - 1/k }
+AMD itself is defined independently of fuzzy c-means. Fuzzy c-means is the
+membership-estimation backend used by this function.
 
-where \eqn{u_i} is the membership vector of sample \eqn{i}.
-The optimal number of clusters is selected as the \code{k} that maximises
-the AMD peak across repetitions.
+The returned \code{c_peak} (and its compatibility alias \code{c_opt}) is only the
+numerical maximum of the evaluated curve. In particular, a maximum at the
+boundary of the examined range is flagged and must not by itself be treated
+as evidence for that number of groups. If several evaluated values are
+exactly tied for the maximum, the smallest \code{c} is returned.
+
+Vector seeds, including seeds generated when \code{seeds = NULL}, preserve the
+historical start-major mapping and therefore depend on the number of
+evaluated candidates. Use a named seed matrix when comparing nested search
+ranges. Extra named columns are allowed and ignored when their \code{c} is not in
+the current range. Duplicate seeds within one candidate \code{c} reduce the
+number of unique random starts and generate a warning.
+
+Every curve contains a \code{manifest_id} linking it to the process-level record
+returned by \code{\link[=amd_reproducibility_manifest]{amd_reproducibility_manifest()}}. Retrieve the manifest
+immediately after each curve and save one copy of every distinct identifier.
+Curves sharing an identifier can share the saved copy.
 }
 \examples{
-\dontrun{
-set.seed(1)
-X <- matrix(rnorm(2000), nrow = 100, ncol = 20)
-res <- compute_amd_curve(X, its = 10, nin = 2, nsp = 6)
-res$k_opt
+set.seed(42)
+X <- rbind(
+  matrix(rnorm(40, mean = -2), ncol = 2),
+  matrix(rnorm(40, mean = 2), ncol = 2)
+)
+curve <- compute_amd_curve(
+  X, its = 2, nin = 2, nsp = 3, seeds = 1:4, verbose = FALSE
+)
+curve$curve
 }
-
+\references{
+Mendoza, M. and Araújo, M. B. (2022). Biogeography of bird and mammal
+trophic structures. \emph{Ecography}, 2022(5), e06289.
+\doi{10.1111/ecog.06289}
 }

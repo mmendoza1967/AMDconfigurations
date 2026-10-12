@@ -1,0 +1,10 @@
+# Preserve the exact audited R sources and their feature-contract checksums.
+/R/** -text
+/data/** -text
+/tests/testthat/fixtures/** -text
+
+# Documentation and automation files use portable line endings.
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf

@@ -1,0 +1,57 @@
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Versioned GitHub release containing the corrected-v2 model asset'
+        required: true
+        default: 'v0.2.0'
+        type: string
+
+name: External reader integration
+
+permissions: read-all
+
+jobs:
+  reader-integration:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+      AMD_RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck, any::jsonlite
+          needs: check
+      - name: Fetch and verify the explicitly versioned external model
+        shell: Rscript {0}
+        run: |
+          manifest <- jsonlite::read_json("models/manifest.json", simplifyVector = TRUE)
+          tag <- Sys.getenv("AMD_RELEASE_TAG")
+          stopifnot(grepl("^v[0-9]+[.][0-9]+[.][0-9]+$", tag))
+          url <- paste0("https://github.com/mmendoza1967/AMDconfigurations/releases/download/",
+                        tag, "/", manifest$file)
+          model <- file.path(Sys.getenv("RUNNER_TEMP"), manifest$file)
+          options(timeout = max(600, getOption("timeout")))
+          download.file(url, model, mode = "wb")
+          stopifnot(file.info(model)$size == manifest$bytes,
+                    digest::digest(file = model, algo = "sha256") == manifest$sha256)
+          writeLines(c(paste0("AMD_PREDICTOR_BUNDLE=", model),
+                       paste0("AMD_PREDICTOR_SHA256=", manifest$sha256)),
+                     Sys.getenv("GITHUB_ENV"), useBytes = TRUE)
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual", "--compact-vignettes=gs+qpdf")'
