@@ -1,7 +1,7 @@
 Package: AMDconfigurations
 Type: Package
 Title: Geometric Analysis of Configurations in High-Dimensional Spaces
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: person("Manuel", "Mendoza", role = c("aut", "cre"),
   email = "mmendoza@mncn.csic.es",
   comment = c(ORCID = "0000-0002-2143-8138"))

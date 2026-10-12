@@ -1,6 +1,6 @@
 on:
   push:
-    branches: ['release/0.2.0']
+    branches: ['release/0.2.0', 'release/0.2.1']
   workflow_dispatch:
 
 name: Checked source release
@@ -14,7 +14,9 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
-      _R_CHECK_CRAN_INCOMING_: false
+      _R_CHECK_CRAN_INCOMING_: true
+      _R_CHECK_CRAN_INCOMING_REMOTE_: false
+      _R_CHECK_CRAN_INCOMING_CHECK_FILE_URIS_: true
       _R_CHECK_FORCE_SUGGESTS_: false
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +27,7 @@ jobs:
           use-public-rspm: true
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::jsonlite
+          extra-packages: any::jsonlite, any::urlchecker
           needs: check
       - name: Build and check the exact source archive with current R
         shell: Rscript {0}
@@ -40,8 +42,18 @@ jobs:
                            stdout = "build.log", stderr = "build.log")
           cat(readLines("build.log", warn = FALSE), sep = "\n")
           stopifnot(built == 0L)
-          archive <- file.path(work, "AMDconfigurations_0.2.0.tar.gz")
+          version <- read.dcf(file.path(source, "DESCRIPTION"))[1, "Version"]
+          archive <- file.path(work, paste0("AMDconfigurations_", version, ".tar.gz"))
           stopifnot(file.exists(archive))
+          unpacked <- file.path(work, "unpacked")
+          dir.create(unpacked)
+          untar(archive, exdir = unpacked)
+          url_problems <- urlchecker::url_check(
+            file.path(unpacked, "AMDconfigurations"), parallel = FALSE)
+          print(url_problems)
+          jsonlite::write_json(as.data.frame(url_problems), "url-problems.json",
+                               pretty = TRUE, auto_unbox = TRUE)
+          stopifnot(NROW(url_problems) == 0L)
           checked <- system2(r, c("CMD", "check", "--as-cran", "--no-manual",
                                  shQuote(archive)),
                              stdout = "check.log", stderr = "check.log")
@@ -55,6 +67,7 @@ jobs:
             sha256 = digest::digest(file = archive, algo = "sha256"),
             build = "R CMD build", check = "R CMD check --as-cran --no-manual",
             status = "Status: OK", incoming_network_check = FALSE,
+            explicit_remote_url_check = TRUE, file_URI_check = TRUE,
             external_model = "not provided; integration is checked separately"
           )
           jsonlite::write_json(record, "source-archive.json", pretty = TRUE, auto_unbox = TRUE)
@@ -63,10 +76,11 @@ jobs:
         with:
           name: current-R-source-release
           path: |
-            ${{ runner.temp }}/amd-source-release/AMDconfigurations_0.2.0.tar.gz
+            ${{ runner.temp }}/amd-source-release/AMDconfigurations_*.tar.gz
             ${{ runner.temp }}/amd-source-release/source-archive.json
             ${{ runner.temp }}/amd-source-release/build.log
             ${{ runner.temp }}/amd-source-release/check.log
+            ${{ runner.temp }}/amd-source-release/url-problems.json
             ${{ runner.temp }}/amd-source-release/AMDconfigurations.Rcheck/00check.log
             ${{ runner.temp }}/amd-source-release/AMDconfigurations.Rcheck/tests/testthat.Rout
           if-no-files-found: error
