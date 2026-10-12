@@ -1,0 +1,28 @@
+AMDconfigurations: component attribution and licences
+
+Package code
+Copyright Manuel Mendoza, 2026. MIT licence; see the package LICENSE file.
+The external corrected-v2 model bundle is produced from synthetic reference
+populations and is distributed under the repository's MIT licence.
+
+Fulldata
+The ecological example data were prepared for Mendoza, M. and Araujo, M. B.
+(2022), Biogeography of bird and mammal trophic structures, Ecography,
+2022(5), e06289, doi:10.1111/ecog.06289. See the dataset help and the cited
+article's supporting information for the variable definitions and provenance.
+This release redistributes the same data bytes as public CRAN version 0.1.0.
+
+Transcdata_small
+Derived by retaining the 1000 highest-variance variables from the cleaned
+transcriptomic matrix deposited by Manuel Mendoza and Miguel Angel Medina:
+High-dimensional transcriptomic dataset for the AMDconfigurations package
+(2026), doi:10.5281/zenodo.18604443.
+The deposited dataset is licensed under Creative Commons Attribution 4.0
+International (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/ .
+That dataset licence is not replaced by the package-code MIT licence.
+The reduced matrix is byte-identical to the example already distributed in
+public CRAN version 0.1.0; no new sample or gene values were introduced here.
+
+Compatibility fixture
+The legacy curve fixture was produced with public AMDconfigurations 0.1.0
+to test inspection of historical objects. It is not new validation data.

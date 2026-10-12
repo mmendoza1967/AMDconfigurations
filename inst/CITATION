@@ -1,0 +1,29 @@
+bibentry(
+  bibtype = "Article",
+  title = "Biogeography of bird and mammal trophic structures",
+  author = c(
+    person("Manuel", "Mendoza"),
+    person("Miguel B.", "Araújo")
+  ),
+  journal = "Ecography",
+  year = "2022",
+  volume = "2022",
+  number = "5",
+  pages = "e06289",
+  doi = "10.1111/ecog.06289",
+  textVersion = paste(
+    "Mendoza, M. and Araújo, M. B. (2022).",
+    "Biogeography of bird and mammal trophic structures.",
+    "Ecography 2022(5): e06289.",
+    "doi:10.1111/ecog.06289"
+  )
+)
+
+bibentry(
+  bibtype = "Manual",
+  title = "AMDconfigurations: Geometric Analysis of Configurations in High-Dimensional Spaces",
+  author = person("Manuel", "Mendoza"),
+  year = "2026",
+  note = "R package version 0.2.0",
+  url = "https://CRAN.R-project.org/package=AMDconfigurations"
+)
