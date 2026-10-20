@@ -7,7 +7,7 @@
   "feature_contract": "amd_modal_features_left_pair_v2_drop37",
   "created_utc": "2026-10-18 11:04:15 UTC",
   "compatible_package_release": "0.4.0",
-  "release_status": "LOCAL_040_CHECKED_ACTIVATED_NOT_PUBLISHED",
+  "release_status": "CHECKED_040_RELEASE_ARTIFACT",
   "resolved_target": "numerically_resolved_density_mode_count",
   "reader_variant": "drop37_all_six_families",
   "forest_seeds": [

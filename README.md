@@ -28,9 +28,10 @@ information to reconstruct the new minimum-objective primary curve.
 
 ## Installation
 
-This directory contains version 0.4.0 with the drop-37 reader. Local installation
-and public release are recorded separately; this version has not yet been
-published. Install it explicitly from its built source archive:
+Version 0.4.0 includes the drop-37 reader. Download the checked source archive
+`AMDconfigurations_0.4.0.tar.gz` from the
+[GitHub releases](https://github.com/mmendoza1967/AMDconfigurations/releases)
+and install it explicitly:
 
 ```r
 install.packages("AMDconfigurations_0.4.0.tar.gz", repos = NULL, type = "source")
@@ -111,8 +112,9 @@ only a numerical summary, not a rule for interpreting an entire curve.
 
 The base workflow does not require a model, `ranger` or `digest`. The optional
 API accepts the external `amd_predictor_bundle_v3_drop37.rds` and its SHA-256.
-The candidate model and matching `manifest.json` are supplied separately
-alongside the source candidate, without an automatic download. The model is
+The model and matching `manifest.json` are separate assets of release v0.4.0,
+alongside the checked source archive. Download them explicitly from the
+GitHub releases page linked above. The model is
 about 49 MiB and is not part of the CRAN source package.
 
 The five discovery-trained forests use 194 raw and 231 processed predictors,
