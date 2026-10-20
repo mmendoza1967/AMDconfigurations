@@ -1,0 +1,124 @@
+AMD DROP-37 READER: EVIDENCE AND INTERPRETATION — 20 OCTOBER 2026
+
+Target and terminology
+The reader targets the independently numerically resolved population
+density-mode count in simulations. FCM configurations are clusters of the
+fitted partition at a specified resolution and data representation. They
+are distinct from generating components, modes and modal basins. Correct
+count does not validate observation assignments or substantive meaning.
+One density mode is not absence of all structure.
+
+Fixed reader
+Five full-six-family forests, seeds 101/202/303/404/505; 194 raw and 231
+processed predictors after removing 37 dimensional descriptors.
+External v3 bundle SHA256:
+3407a5a55c30a70e150afaa16a52ee4f2c8d3ed265941f3af8c4cb9d0c99035f
+Forests trained on 1725 discovery populations. Own exact-K and one/several
+logistic calibrators fitted on 1721 selection populations only. No
+excluded-family calibrator is used. Candidate range 1:14; assessed output
+support 1:8. Above-eight truths remain in evaluation denominators.
+
+Common-unit validation
+Independent bank: 1728 generated, 1719 numerically resolved, 9 unresolved.
+Exact-count accuracy at original units: 69.75% for drop-37 versus 69.63%
+for a discovery-trained matched absolute-feature control. Paired difference
+0.12 percentage points, bootstrap 95% interval -0.81 to 1.05.
+Common positive scaling of all coordinates by 0.25, 0.5, 2 and 4 changed no
+drop-37 proposals in 1728 descriptor-level checks and 36 prespecified
+end-to-end checks. This does not establish invariance to arbitrary
+independent rescaling of variables or formal predictive equivalence.
+
+Retrospective comparison on the historical final benchmark
+1723 resolved populations, including four truths above eight; no new forests.
+Drop-37 exact-count accuracy: 69.8201%, population bootstrap 95% interval
+67.5566 to 72.0255. Historical complete reader: 75.1596%; paired difference
+-5.3395 percentage points, interval -6.8485 to -3.8305.
+The historical reader was fitted on discovery plus selection, whereas this
+drop-37 reader uses discovery only. This is not a causal feature ablation.
+Gap firstSEmax achieved 57.0517%, GMM-ICL 56.9356%, and GMM-BIC 55.9489%.
+These are comparisons of complete procedures within the assessed domain.
+
+Assignment recovery was evaluated independently of count accuracy. Using
+1722 populations with fully assigned modal-basin references, mean selected
+FCM-partition ARI was 0.7526 for drop-37 and 0.7630 for the historical reader.
+Among the 1452 multimodal populations, respective means were 0.7218 and
+0.7300. FCM supplied with the true modal count gave 0.7448; GMM-BIC gave
+0.7964. Better count accuracy therefore did not imply better assignments.
+The strict analysis excludes one partially assigned reference population;
+it does not silently remove individual unassigned observations.
+
+Prospective assessment with frozen reader and own calibrators
+1728 generated, 1721 resolved, 7 unresolved; six resolved truths above 8.
+Exact count: accuracy 68.5067%, mean reference confidence 70.9105%;
+confidence excess 2.4039 percentage points, bootstrap 95% 0.6532 to 4.1538.
+One/several: accuracy 92.9692%, mean reference confidence 93.2200%;
+excess 0.2508 points, interval -0.7550 to 1.2861.
+These are finite simulation-domain assessments, not individual guarantees.
+
+Controlled distribution challenge with the same frozen reader
+1824 populations, all modal truths resolved. Continuous factored densities,
+aligned component centres and rotations; 19 scenarios across Gaussian,
+Gumbel, logistic and quartic densities.
+Exact count: accuracy 60.5263%, mean reference confidence 66.7108%;
+excess 6.1845 points, bootstrap 95% 4.2333 to 8.0916.
+One/several: accuracy 89.4737%, mean reference confidence 90.1499%;
+excess 0.6762 points, interval -0.5684 to 1.9642.
+Gaussian controls also showed exact-count overconfidence.
+Among 565 reference values >=0.9, 50 exact-count errors occurred. A
+post-result subgroup of 189 proposals of K=2 contained 46 errors; all five
+forests agreed in those errors. This descriptive cutoff is not a K rule.
+
+Completed training-intervention review
+Two fixed interventions retained all six original families and the same
+drop-37 predictors: adding stored challenge populations with equal bank mass,
+and then controlling bank and modal-count masses to separate weight effects.
+Each intervention fitted 100 forests: 19 complete held-out scenarios times
+five seeds and five full fits for the prior bank. These are retrospective
+comparisons on already examined banks, not independent confirmation.
+
+Original / augmented / weight-controlled challenge exact-count accuracies:
+60.53% / 67.43% / 67.05%. The weight-controlled gain over the frozen reader
+was 6.52 percentage points (conditional scenario-bootstrap 95% 3.67 to 9.43).
+Prior-bank exact accuracies were 68.51% / 68.33% / 68.39%.
+The average challenge improvements are retained as positive findings.
+
+In scenario 13, with three true modes in all 96 populations, false proposals
+of one mode were 0 / 30 / 23. Thus controlling weights mitigated but did not
+remove the substantial local regression. Both interventions repaired only
+three of the 46 original high-reference K=2 errors. Scenario 14 exact-count
+successes were 10 / 3 / 3 out of 96. The weight-controlled prior-bank
+one/several accuracy was 92.45%, compared with the frozen reader's 92.97%.
+No post-result noninferiority threshold was invented.
+
+Both replacements are rejected for this release and archived as completed
+experimental evidence. They are not an open adoption queue. No calibrators
+were fitted for these rejected models, and no original-reader certainty was
+transferred to them. The package retains the frozen reader's measured
+performance and limitations; this reporting correction is not a claim that
+all modal-count errors or arbitrary distribution shifts have been repaired.
+
+Operational consequence
+The package retains modal-count estimation. It reports proposed_k and
+proposed_multiple_modes, forest agreement, and continuous conditional
+simulation-reference values separately. Reliability for the distribution
+being analysed is not established by N,D membership, high reference
+confidence or forest unanimity. No automatic applicability threshold is
+claimed. allow_extrapolation exposes reference values; it cannot validate
+transport. The AMD peak is a numerical summary, not an automatic K rule.
+
+Sources in the reproducibility workspace
+rf_drop37_fresh_validation_20261014/VALIDATION_CLOSEOUT_20261016.json
+drop37_certainty_prospective_20261018/VALIDATION_CLOSEOUT.json
+drop37_applicability_20261019/EXPERIMENT_CLOSEOUT.json
+paper_revision_20261020/FINAL_BENCHMARK_VERIFIED.json
+paper_revision_20261020/assignment_results/ASSIGNMENT_VERIFIED.json
+drop37_training_repair_20261019/INFORME_REVISION_APRENDIZAJE_20261020.txt
+drop37_weight_control_20261020/INFORME_CIERRE_LECTOR_20261020.txt
+TERMINOLOGIA_AMD.txt
+Training-intervention results are not substituted into fixed-reader results.
+
+Conceptual references
+Hennig, C. (2015), What are the true clusters?
+Pattern Recognition Letters 64, 53-62. doi:10.1016/j.patrec.2015.04.009
+Chacon, J. E. (2015), A population background for nonparametric density-based
+clustering. Statistical Science 30, 518-532. doi:10.1214/15-STS526

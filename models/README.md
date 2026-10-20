@@ -1,29 +1,29 @@
-# Corrected-v2 optional AMD reader
+# Drop-37 optional AMD reader
 
-This directory contains the model manifest, not the model binary. The matching
-GitHub release provides `amd_predictor_bundle_v2.rds` as a separate asset. The
-package itself never downloads models and the manual AMD workflow needs none.
+The model is `amd_predictor_bundle_v3_drop37.rds`, compatible with 0.4.0 and
+the frozen 0.3.0 package. This directory contains its manifest, not the binary.
+The package does not download models or train forests.
 
-Use the SHA-256 in `manifest.json` with `load_amd_predictor()`. Do not trust a
-file only because its filename matches. The expected file is 86,675,904 bytes
-and its SHA-256 is
-`961f7ab814b41414f9342398726cac8058a65095d98dc18966c6e316b665c630`.
+The file is 51,787,778 bytes. Its SHA-256 is
+`3407a5a55c30a70e150afaa16a52ee4f2c8d3ed265941f3af8c4cb9d0c99035f`.
 
-The bundle contains five already-trained corrected-boundary forests and the
-unchanged historical confidence calibrators. It records assembly version
-0.2.0.9014; that label is preserved rather than recompressing the frozen models.
-Compatibility is tested with package release 0.2.0. The training feature
-contract and model are versioned together; historical v1 study artefacts are
-not inputs to this interface and remain unchanged in the study archive.
+Five 1000-tree forests were trained on 1725 discovery populations spanning
+all six families, using 194 raw and 231 processed predictors. Their own
+exact-K and one/several calibrators were fitted on 1721 selection populations.
+Family-exclusion models and calibrators are not used.
 
-The target is a numerically resolved density-mode count in synthetic reference
-populations, not the number of generating components. AMD itself does not
-estimate a density. The corrected reader's certainty transfer was checked
-retrospectively on the previously examined final bank; it is not new prospective
-validation. Numeric grid membership does not certify the geometry of real data.
-Unassessed outputs, missingness or changes in training-constant descriptors
-also restrict certainty reporting. See the package help and migration guide.
+The target remains population density-mode count. The package reports the
+proposal and forest agreement separately from conditional simulation-reference
+values. Reliability for the analysed distribution is not established by matching
+N,D or by unanimous votes. Existing feature, numeric and output guards apply to
+reference values. No confidence cutoff or numerical AMD peak chooses K.
 
-Code and these synthetic-data model artefacts are distributed under the MIT
-license in the repository. The source package's separately attributed example
-datasets retain their stated licences.
+See `inst/READER_EVIDENCE.txt` for the completed common-unit, prospective and
+distribution-challenge assessments. The frozen model metadata describes its
+assembly evidence; later assessments are documented without changing its hash.
+Empirical configurations refer to the fitted FCM partition, and are distinct
+from density modes, modal basins and generating components.
+
+Model: CC BY 4.0, Manuel Mendoza. Package code: MIT.
+Historical v1/v2 models require their matching historical package versions.
+Public publication status is recorded separately from local package checks.

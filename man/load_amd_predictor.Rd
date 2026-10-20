@@ -2,12 +2,12 @@
 % Please edit documentation in R/amd_predictor.R
 \name{load_amd_predictor}
 \alias{load_amd_predictor}
-\title{Load the optional corrected AMD reader}
+\title{Load the optional drop-37 AMD reader}
 \usage{
 load_amd_predictor(path, sha256)
 }
 \arguments{
-\item{path}{Path to a corrected \code{amd_predictor_bundle_v2} RDS file.}
+\item{path}{Path to an \code{amd_predictor_bundle_v3_drop37} RDS file.}
 
 \item{sha256}{Expected 64-character SHA-256 from the matching bundle manifest.
 The optional package \code{digest} is required for this integrity check.}
@@ -19,6 +19,6 @@ An object of class \code{"amd_predictor"}.
 Loads the external model bundle used by \code{\link[=predict_amd]{predict_amd()}}. The large fitted
 random forests are deliberately not embedded in the base package. Loading
 verifies a caller-supplied SHA-256, validates the model and preprocessing
-contracts, and never downloads or refits a model. Historical v1 bundles
-cannot be paired with the corrected extractor in this interface.
+contracts, and never downloads or refits a model. Historical v1/v2 bundles
+remain reproducible with their matching historical package versions.
 }

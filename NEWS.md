@@ -1,3 +1,38 @@
+# AMDconfigurations 0.4.0
+
+- Separated modal-count proposals, forest agreement, conditional simulation
+  reference values and applicability to the analysed distribution.
+- `reliability` no longer reports simulation calibration as established
+  reliability for a new distribution. Continuous own-calibrator values are in
+  `reference_reliability`; existing feature, output and numeric guards remain.
+- Added `proposed_multiple_modes`; `has_structure` remains a compatibility alias.
+- Adopted empirical configurations / clusters of the fitted FCM partition at a
+  specified resolution, distinct from components, modes and modal basins.
+- Included subsequent prospective and distribution-challenge evidence, including
+  exact-count overconfidence and confident unanimous errors.
+- Closed the augmented-training and modal-weight-control review. Both tested
+  replacements are excluded from this release because substantial local
+  regressions remain. The frozen drop-37 forests and own calibrators are retained.
+- Added retrospective historical-benchmark and modal-basin assignment results
+  for the frozen reader, with their distinct training and evaluation scopes.
+
+# AMDconfigurations 0.3.0 (local release candidate)
+
+- Adopted the full-six-family drop-37 reader. Its external v3 bundle excludes
+  37 dimensional descriptors, retaining 194 raw and 231 processed predictors,
+  and removes the tested common-unit sensitivity.
+- Added own exact-K and one/several correctness calibrators fitted on selection
+  only. Their assessment on the previously examined independently sampled bank
+  is retrospective; the unchanged forests retain their prospective validation.
+- Reliability remains continuous per prediction, without an automatic cutoff.
+  Numerical-grid, output, missingness and constant safeguards remain in force;
+  grid membership does not certify real-data geometry.
+- Require the versioned v3 drop-37 bundle and checksum. Historical v1/v2 bundles
+  remain reproducible with matching historical releases. Excluded-family
+  readers are archived diagnostics and are not deployed.
+- Preserved the AMD definition, curve construction, assignments, feature-helper
+  arithmetic, public historical snapshots and study classifications.
+
 # AMDconfigurations 0.2.1
 
 - Corrected the README model-manifest link for CRAN resubmission. The

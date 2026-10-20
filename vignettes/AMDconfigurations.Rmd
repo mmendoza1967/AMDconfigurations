@@ -96,8 +96,9 @@ the primary object of interpretation. The data generator contains three
 groups, yet the AMD values at `c=3` and `c=4` are nearly tied and the numerical
 winner can be `c=4`. The subsequent decline supports a well-defined resolution
 around that short plateau, but the isolated arithmetic maximum does not by
-itself distinguish three generating groups from a four-part refinement. The
-known truth is used below to extract `c=3`; it is not inferred by `which.max()`.
+itself distinguish three generating components from a four-part refinement. The
+illustrative resolution `c=3` is specified explicitly below; neither generator
+component count nor `which.max()` establishes a density-mode count.
 
 # Reading before assigning
 
@@ -112,8 +113,8 @@ In particular:
   stability and the range examined.
 
 The package therefore requires an explicit `c` when extracting assignments.
-Here `c=3` is used because it is known from the synthetic generator, not because
-the API selected it automatically.
+Here `c=3` illustrates a partition with the same number of configurations as
+generator components. This does not independently verify modal truth.
 
 ```{r assignment}
 chosen_c <- 3L
@@ -145,8 +146,8 @@ not a universal cutoff. Diagnostics not measured are listed explicitly in
 
 # Optional model-assisted interpretation
 
-Version 0.2.0 includes an optional reader. It uses five fitted
-random forests in an external corrected-v2 bundle; no models are downloaded or
+Version 0.4.0 uses the optional drop-37 reader. It uses five fitted
+random forests in an external v3 drop-37 bundle; no models are downloaded or
 trained by the package. `ranger` and `digest` are needed only for this workflow.
 Obtain the model file and its expected SHA-256 from the same trusted release.
 
@@ -155,6 +156,8 @@ reader <- load_amd_predictor(bundle_path, sha256 = bundle_sha256)
 result <- predict_amd(X, reader, seed = 123, verbose = FALSE)
 plot(result)
 result$proposed_k
+result$reference_reliability
+result$agreement
 result$reliability
 ```
 
@@ -173,18 +176,28 @@ explicit `c`. Reliability estimates correctness of the emitted one/several-modes
 decision and correctness of the exact proposed K, separately; it is not directly
 the probability that groups exist.
 
-The corrected forests' historical calibrators were reassessed on the previously
-examined final simulation bank, not in a new prospective validation. Reliability
-is suppressed by default unless N is 150 or 600, D is 2, 6 or 15, the output is
-within the observed support K=1:8 and no unassessed missingness occurs. Matching
-N and D does not certify new-data geometry; do not subsample or pad data merely
-to obtain a reported certainty. `allow_extrapolation=TRUE` can expose unvalidated
-numerical values away from the grid, but cannot validate them.
+The drop-37 forests retain 194 raw and 231 processed predictors. Their own
+calibrators were fitted on selection only.
 
-The frozen models omitted value columns for the zero-variance fraction
-(always zero) and minimum covariance-rank fraction (always one). Departures
-suppress certainty even on the grid and cannot be overridden with
-`allow_extrapolation`.
+The reader estimates the population density-mode count. `proposed_k` is its
+proposal; `agreement` describes the five forest votes. Neither consensus nor the
+numerical AMD maximum is an automatic scientific choice of resolution.
+
+`reliability` is `NA` with status
+`not_established_for_analysed_distribution`. Continuous own-calibrator values
+remain in `reference_reliability`, separately for exact K and one/several.
+These are estimates conditional on the reference simulations, not certified
+probabilities for a new distribution. Matching N and D does not establish
+distributional applicability. A later prospective bank showed an exact-count
+confidence excess of 2.40 percentage points; a controlled distribution challenge
+showed an excess of 6.18 points. Unanimous forests can share the same error.
+
+Reference values are suppressed by default outside N={150,600}, D={2,6,15},
+assessed output support K=1:8, or assessed missingness and training-constant
+conditions. `allow_extrapolation=TRUE` exposes off-grid reference values only;
+it never certifies applicability or overrides feature/output guards.
+No confidence cutoff chooses K. Do not alter data to match the numerical grid.
+See `system.file("READER_EVIDENCE.txt", package="AMDconfigurations")`.
 
 The descriptors include quadratic distance and covariance operations. A
 working-memory risk guard runs before new fits; it excludes the loaded forests
