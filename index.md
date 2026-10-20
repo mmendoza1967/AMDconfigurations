@@ -18,7 +18,12 @@ should not be confused:
     resolution.
 
 AMD is defined independently of fuzzy c-means. Fuzzy c-means is the
-current membership-estimation backend used to construct curves.
+current membership-estimation backend used to construct curves. At a
+specified resolution and data representation, its groups are empirical
+configurations / clusters of the fitted FCM partition. They need not
+coincide with generator components, density modes or modal basins. Count
+correctness does not validate assignments or the substantive meaning of
+those configurations.
 
 Users moving from public version 0.1.0 should read
 [inst/MIGRATION.md](https://mmendoza1967.github.io/AMDconfigurations/inst/MIGRATION.md).
@@ -28,29 +33,22 @@ curve.
 
 ## Installation
 
-Install the released package from CRAN:
+Version 0.4.0 includes the drop-37 reader. Download the checked source
+archive `AMDconfigurations_0.4.0.tar.gz` from the [GitHub
+releases](https://github.com/mmendoza1967/AMDconfigurations/releases)
+and install it explicitly:
 
 ``` r
 
-install.packages("AMDconfigurations")
-packageVersion("AMDconfigurations")
-```
-
-CRAN may still provide version 0.1.0 while the 0.2.1 update is under
-review. The diagnostics and optional reader below require version 0.2.0
-or later. For the versioned GitHub release:
-
-``` r
-
-# install.packages("remotes")
-remotes::install_github("mmendoza1967/AMDconfigurations@v0.2.1")
+install.packages("AMDconfigurations_0.4.0.tar.gz", repos = NULL, type = "source")
 ```
 
 ## Core example
 
-The example below has three known synthetic groups. The known value is
-used only to demonstrate explicit extraction; real analyses must justify
-`c` from the observed curve and supporting diagnostics.
+The example below uses three generating components. We extract a fitted
+FCM partition at c=3 to illustrate the API; this does not equate
+components, density modes and empirical configurations. Real analyses
+must justify `c` from the observed curve and supporting diagnostics.
 
 ``` r
 
@@ -84,7 +82,7 @@ curve <- compute_amd_curve(
 
 plot(curve)
 
-# Explicit illustrative choice, known from data generation in this example.
+# Explicit illustrative resolution; not an independently verified modal truth.
 chosen_c <- 3L
 assigned <- assign_configurations(curve, c = chosen_c)
 ```
@@ -119,76 +117,80 @@ explicit descriptive convention, not a universal threshold for
 structure. A strict local-maximum flag is likewise only a numerical
 summary, not a rule for interpreting an entire curve.
 
-## Optional model-assisted reader
+## Optional drop-37 model-assisted reader
 
-The base workflow above does not require a model, `ranger`, or `digest`.
-The API also accepts an explicitly provided external corrected-v2 bundle
-and its SHA-256. Download `amd_predictor_bundle_v2.rds` manually from
-the [v0.2.0 model
-release](https://github.com/mmendoza1967/AMDconfigurations/releases/tag/v0.2.0),
-then check its identity against the versioned [model
-manifest](https://raw.githubusercontent.com/mmendoza1967/AMDconfigurations/v0.2.0/models/manifest.json).
-The documentation-only 0.2.1 update uses that unchanged model. The model
-is about 83 MiB and is not part of the CRAN source package.
+The base workflow does not require a model, `ranger` or `digest`. The
+optional API accepts the external `amd_predictor_bundle_v3_drop37.rds`
+and its SHA-256. The model and matching `manifest.json` are separate
+assets of release v0.4.0, alongside the checked source archive. Download
+them explicitly from the GitHub releases page linked above. The model is
+about 49 MiB and is not part of the CRAN source package.
+
+The five discovery-trained forests use 194 raw and 231 processed
+predictors, excluding the 37 dimensional descriptors responsible for the
+tested common-unit sensitivity. Their own exact-K and one/several
+correctness calibrators were fitted on selection populations only.
 
 ``` r
 
 # Optional dependencies; install them only if using the reader.
 # install.packages(c("ranger", "digest"))
-bundle_path <- "path/to/amd_predictor_bundle_v2.rds"
-bundle_sha256 <- "961f7ab814b41414f9342398726cac8058a65095d98dc18966c6e316b665c630"
+bundle_path <- "path/to/amd_predictor_bundle_v3_drop37.rds"
+bundle_sha256 <- "3407a5a55c30a70e150afaa16a52ee4f2c8d3ed265941f3af8c4cb9d0c99035f"
 reader <- load_amd_predictor(bundle_path, sha256 = bundle_sha256)
 result <- predict_amd(X, reader, seed = 123, verbose = FALSE)
 plot(result)
 result$proposed_k
-result$reliability
+result$reference_reliability  # conditional on reference simulations
+result$agreement              # forest votes, not correctness probability
+result$reliability            # applicability to this distribution is unestablished
 
-# An existing curve is reused only if it matches the frozen reader settings:
+# A compatible saved curve avoids repeating the principal fits:
 # c=2:14, 20 starts, m=2, iter_max=2000, no scaling or preselection.
 # result <- predict_amd(X, reader, curve = compatible_curve, seed = 123)
 ```
 
-There are no automatic downloads and no forest training. A supplied
-compatible curve avoids repeating its principal fits; the reader still
-performs the five computational restarts per c required by its feature
-contract. These restarts are not resampling stability. The output keeps
-the numerical curve maximum, the assisted proposal and the user’s
-scientific choice separate.
+The reader still performs five computational restarts per c required by
+the feature contract. These are not sample resampling. Numerical curve
+maximum, assisted proposal and scientific choice remain separate. K
+targets the numerically resolved density-mode count of the simulation
+reference, not necessarily generator components; AMD itself does not
+estimate density.
 
-The reader’s K is the numerically resolved density-mode count used as
-the simulation reference, not necessarily the number of generating
-components. AMD itself does not estimate a density. Off-grid proposals
-are explicitly labelled exploratory, not just proposals with an
-unavailable certainty.
+The reader estimates the population density-mode count. `proposed_k` is
+its proposal; `agreement` describes the five forest votes. Neither
+consensus nor the numerical AMD maximum is an automatic scientific
+choice of resolution.
 
-Reliability concerns correctness of the emitted one/several-modes
-decision and correctness of exact K, separately; it is not directly a
-probability that groups exist. The corrected forests’ unchanged
-historical calibrators were reassessed retrospectively on the previously
-examined final bank. This does not create a new prospective validation.
-Default certainty reporting is restricted to N={150,600}, D={2,6,15},
-assessed outputs and missingness patterns. The zero-variance fraction
-was always zero and minimum covariance-rank fraction always one in
-training, so their value columns were omitted by the frozen models.
-Departures suppress certainty; no trees are refitted to absorb them.
-Matching N and D does not certify new-data geometry. Interpolation is
-not assumed to preserve reliability. Historical v1 bundles remain frozen
-study artefacts and are deliberately rejected by the corrected
-extractor.
+`reliability` is `NA` with status
+`not_established_for_analysed_distribution`. Continuous own-calibrator
+values remain in `reference_reliability`, separately for exact K and
+one/several. These are estimates conditional on the reference
+simulations, not certified probabilities for a new distribution.
+Matching N and D does not establish distributional applicability. A
+later prospective bank showed an exact-count confidence excess of 2.40
+percentage points; a controlled distribution challenge showed an excess
+of 6.18 points. Unanimous forests can share the same error.
 
-The descriptors include sample distances and covariance summaries. A
-working-memory estimate is checked before any new fit; the default limit
-is 512 MiB for descriptor work, excluding the loaded forests. This is a
-risk guard, not a guaranteed process-memory bound or runtime limit.
-Partition distances use all rows. As in the frozen feature definition,
-global distance summaries use a seeded sample of 2000 rows when N
-exceeds 2000; the actual count and distinct exact/subsampled flags are
-reported. This occurs only outside the assessed N grid. No additional
-approximation bypasses the guard. The manual curve and
-[`diagnose_amd()`](https://mmendoza1967.github.io/AMDconfigurations/reference/diagnose_amd.md)
-remain available without this quadratic operation. Certainty combines
-several decision descriptors; it is not simply the fraction of forests
-that agree and need not increase with agreement alone.
+Reference values are suppressed by default outside N={150,600},
+D={2,6,15}, assessed output support K=1:8, or assessed missingness and
+training-constant conditions. `allow_extrapolation=TRUE` exposes
+off-grid reference values only; it never certifies applicability or
+overrides feature/output guards. No confidence cutoff chooses K. Do not
+alter data to match the numerical grid. See
+`system.file("READER_EVIDENCE.txt", package="AMDconfigurations")`.
+
+Historical v1/v2 bundles remain reproducible with their matching
+historical package versions and are rejected by the active drop-37
+interface. Family- exclusion readers are archived diagnostics and are
+not included in this bundle.
+
+A working-memory estimate is checked before new fits; the default 512
+MiB descriptor limit excludes loaded forests and is not a total-memory
+guarantee. Partition distances use all rows. Frozen global-distance
+summaries use a seeded sample of 2000 rows when N exceeds 2000, with
+sample count and sampling flags reported. No additional approximation
+bypasses the guard.
 
 ## Reproducibility
 
@@ -221,14 +223,15 @@ remains a research question.
 
 ## Reference
 
-Mendoza, M. & Araújo, M. B. (2022). Biogeography of bird and mammal
+Mendoza, M. & Araujo, M. B. (2022). Biogeography of bird and mammal
 trophic structures. *Ecography*, 2022(5), e06289.
 <doi:10.1111/ecog.06289>.
 
 ## License
 
-Package code and the optional synthetic-data model bundle: MIT License.
-The transcriptomic example dataset retains its separately attributed CC
-BY 4.0 licence; see
+Package code: MIT License. The new drop-37 model bundle: CC BY 4.0,
+attributed to Manuel Mendoza. Historical bundles retain their existing
+licences. The transcriptomic example dataset retains its separately
+attributed CC BY 4.0 licence; see
 [inst/COPYRIGHTS](https://mmendoza1967.github.io/AMDconfigurations/inst/COPYRIGHTS)
 and the dataset help.

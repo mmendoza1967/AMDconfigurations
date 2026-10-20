@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">AMDconfigurations</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,11 +30,30 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/mmendoza1967/AMDconfigurations/blob/v0.2.1/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/mmendoza1967/AMDconfigurations/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.1" id="amdconfigurations-021">AMDconfigurations 0.2.1<a class="anchor" aria-label="anchor" href="#amdconfigurations-021"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.0" id="amdconfigurations-040">AMDconfigurations 0.4.0<a class="anchor" aria-label="anchor" href="#amdconfigurations-040"></a></h2>
+<ul><li>Separated modal-count proposals, forest agreement, conditional simulation reference values and applicability to the analysed distribution.</li>
+<li>
+<code>reliability</code> no longer reports simulation calibration as established reliability for a new distribution. Continuous own-calibrator values are in <code>reference_reliability</code>; existing feature, output and numeric guards remain.</li>
+<li>Added <code>proposed_multiple_modes</code>; <code>has_structure</code> remains a compatibility alias.</li>
+<li>Adopted empirical configurations / clusters of the fitted FCM partition at a specified resolution, distinct from components, modes and modal basins.</li>
+<li>Included subsequent prospective and distribution-challenge evidence, including exact-count overconfidence and confident unanimous errors.</li>
+<li>Closed the augmented-training and modal-weight-control review. Both tested replacements are excluded from this release because substantial local regressions remain. The frozen drop-37 forests and own calibrators are retained.</li>
+<li>Added retrospective historical-benchmark and modal-basin assignment results for the frozen reader, with their distinct training and evaluation scopes.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.0" id="amdconfigurations-030-local-release-candidate">AMDconfigurations 0.3.0 (local release candidate)<a class="anchor" aria-label="anchor" href="#amdconfigurations-030-local-release-candidate"></a></h2>
+<ul><li>Adopted the full-six-family drop-37 reader. Its external v3 bundle excludes 37 dimensional descriptors, retaining 194 raw and 231 processed predictors, and removes the tested common-unit sensitivity.</li>
+<li>Added own exact-K and one/several correctness calibrators fitted on selection only. Their assessment on the previously examined independently sampled bank is retrospective; the unchanged forests retain their prospective validation.</li>
+<li>Reliability remains continuous per prediction, without an automatic cutoff. Numerical-grid, output, missingness and constant safeguards remain in force; grid membership does not certify real-data geometry.</li>
+<li>Require the versioned v3 drop-37 bundle and checksum. Historical v1/v2 bundles remain reproducible with matching historical releases. Excluded-family readers are archived diagnostics and are not deployed.</li>
+<li>Preserved the AMD definition, curve construction, assignments, feature-helper arithmetic, public historical snapshots and study classifications.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.1" id="amdconfigurations-021">AMDconfigurations 0.2.1<a class="anchor" aria-label="anchor" href="#amdconfigurations-021"></a></h2><p class="text-muted">CRAN release: 2026-10-12</p>
 <ul><li>Corrected the README model-manifest link for CRAN resubmission. The manifest remains available at the fixed v0.2.0 URL even though the external model directory is deliberately excluded from the CRAN source package.</li>
 <li>Updated package-version and installation references. The R implementation, bundled datasets, corrected-v2 forests and confidence calibrators are unchanged.</li>
 <li>Kept the original Ecography DOI as a plain identifier in the README; its publisher redirect returned HTTP 403 to automated URL checking. The cited article and DOI have not changed.</li>

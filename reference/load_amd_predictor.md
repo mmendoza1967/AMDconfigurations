@@ -1,12 +1,12 @@
-# Load the optional corrected AMD reader
+# Load the optional drop-37 AMD reader
 
 Loads the external model bundle used by
 [`predict_amd()`](https://mmendoza1967.github.io/AMDconfigurations/reference/predict_amd.md).
 The large fitted random forests are deliberately not embedded in the
 base package. Loading verifies a caller-supplied SHA-256, validates the
 model and preprocessing contracts, and never downloads or refits a
-model. Historical v1 bundles cannot be paired with the corrected
-extractor in this interface.
+model. Historical v1/v2 bundles remain reproducible with their matching
+historical package versions.
 
 ## Usage
 
@@ -18,7 +18,7 @@ load_amd_predictor(path, sha256)
 
 - path:
 
-  Path to a corrected `amd_predictor_bundle_v2` RDS file.
+  Path to an `amd_predictor_bundle_v3_drop37` RDS file.
 
 - sha256:
 

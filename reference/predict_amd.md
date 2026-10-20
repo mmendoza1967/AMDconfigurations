@@ -3,13 +3,13 @@
 Optional assistance for interpreting a complete AMD curve. It computes
 the frozen `c = 2,...,14` AMD analysis (unless a compatible curve is
 supplied), derives curve, data, and candidate-partition descriptors, and
-applies five externally loaded random forests. Reliability estimates the
-chance that the emitted one-versus-several-modes decision, or the exact
-proposed K, is correct within the assessed simulation domain. It is not
-directly the probability that groups exist. The target is the
-numerically resolved number of density modes used as the simulation
-reference, not necessarily the number of generating components. AMD
-itself does not estimate a density.
+applies five externally loaded random forests. Conditional reference
+values estimate correctness of the one-versus-several-modes decision and
+exact K under the reference simulation regime. Reliability for a new
+distribution remains unestablished; these values are not the probability
+that groups exist. The target is the numerically resolved number of
+density modes used as the simulation reference, not necessarily the
+number of generating components. AMD itself does not estimate a density.
 
 ## Usage
 
@@ -50,9 +50,11 @@ predict_amd(
 
 - allow_extrapolation:
 
-  Logical. Away from the validated numerical grid, retain calibrated
-  numerical values but label interpolation or extrapolation as
-  unvalidated instead of suppressing them.
+  Logical. Away from the validated numerical grid, retain conditional
+  simulation-reference values in `reference_reliability`, labelled as
+  unvalidated interpolation or extrapolation. This never establishes
+  reliability for the analysed distribution and does not override
+  feature or output-support guards.
 
 - verbose:
 
@@ -72,8 +74,14 @@ predict_amd(
 
 An object of class `"amd_prediction"` containing the AMD curve, proposed
 numerically resolved density-mode count `K`, separate structure and
-exact-modal-count reliability estimates, candidate scores, five-seed
-proposals, diagnostics, and applicability.
+exact-modal-count conditional reference estimates. `reliability` remains
+`NA` because applicability to the analysed distribution has not been
+established. `reference_reliability` contains the own-calibrator values
+subject to applicability guards. `agreement` contains forest vote
+fractions, not probabilities of correctness. `has_structure` is retained
+as a compatibility alias for `proposed_multiple_modes`. The object
+includes candidate scores, five-seed proposals, diagnostics, and
+applicability.
 
 ## Details
 
@@ -83,18 +91,25 @@ observations. When `K > 1` is proposed, use
 [`assign_configurations()`](https://mmendoza1967.github.io/AMDconfigurations/reference/assign_configurations.md)
 with the returned curve and a scientifically justified `c`.
 
-The corrected forests use the documented missing-left-pair convention.
-Their unchanged historical calibrators were reassessed retrospectively
-on the previously examined final bank, not on a new prospective
-validation. Certainties are suppressed by default outside the numerical
-validation grid N = 150 or 600, D = 2, 6 or 15. Matching this grid does
-not certify the geometry of new data. The observed validation output
-support was K=1:8, although the mechanical candidate range is 1:14.
-Constant predictors dropped during training include the zero-variance
-fraction (always zero) and the minimum covariance-rank fraction (always
-one). A departure from those constants suppresses certainty, even on the
-numeric grid. This safeguard does not certify all other aspects of
-new-data geometry.
+The drop-37 forests omit 37 dimensional descriptors and use the
+corrected missing-left-pair convention. Their own correctness
+calibrators were fitted only on selection populations. A subsequent
+fixed-reader prospective bank gave 68.51 percent exact-count accuracy
+versus 70.91 percent mean reference confidence. A controlled
+distribution challenge gave 60.53 versus 66.71 percent. Thus the
+calibrated values cannot certify accuracy for a new distribution merely
+because N and D match the simulation grid.
+
+Continuous exact-K and one/several values remain available separately in
+`reference_reliability`; no certainty threshold chooses or rejects K. By
+default these reference values are suppressed outside N = 150 or 600, D
+= 2, 6 or 15, assessed output support K=1:8, or assessed feature
+conditions. The mechanical candidate range remains 1:14. Departures from
+omitted training-constant predictors also suppress reference values.
+Neither forest unanimity nor a large reference value establishes
+distributional applicability. Count correctness does not validate FCM
+assignments or the scientific meaning of empirical configurations. See
+the installed `READER_EVIDENCE.txt` for evidence and limits.
 
 Supplying a compatible curve avoids its 260 principal fits. The
 additional five computational restarts per c required by the reader are

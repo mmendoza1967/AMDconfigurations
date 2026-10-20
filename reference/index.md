@@ -17,7 +17,7 @@
 - [`diagnose_amd()`](https://mmendoza1967.github.io/AMDconfigurations/reference/diagnose_amd.md)
   : Describe an AMD curve and its stored partitions
 - [`load_amd_predictor()`](https://mmendoza1967.github.io/AMDconfigurations/reference/load_amd_predictor.md)
-  : Load the optional corrected AMD reader
+  : Load the optional drop-37 AMD reader
 - [`plot(`*`<amd_curve>`*`)`](https://mmendoza1967.github.io/AMDconfigurations/reference/plot.amd_curve.md)
   : Plot method for AMD curve objects
 - [`plot(`*`<amd_prediction>`*`)`](https://mmendoza1967.github.io/AMDconfigurations/reference/plot.amd_prediction.md)
