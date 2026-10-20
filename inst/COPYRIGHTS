@@ -2,8 +2,10 @@ AMDconfigurations: component attribution and licences
 
 Package code
 Copyright Manuel Mendoza, 2026. MIT licence; see the package LICENSE file.
-The external corrected-v2 model bundle is produced from synthetic reference
-populations and is distributed under the repository's MIT licence.
+The external drop-37 v3 model bundle is produced from synthetic reference
+populations and licensed CC BY 4.0, attributed to Manuel Mendoza. It is not
+embedded in the base source package. Historical corrected-v2 bundles retain
+their original MIT licence; no historical artefact is relicensed here.
 
 Fulldata
 The ecological example data were prepared for Mendoza, M. and Araujo, M. B.

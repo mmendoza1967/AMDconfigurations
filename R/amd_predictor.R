@@ -1,9 +1,10 @@
-# Optional model-assisted reader; corrected, versioned feature contract ------
+# Optional drop-37 reader; versioned feature contract -----------------------
 
 .amd_predictor_required_fields <- c(
   "schema", "feature_contract", "amd_package_version", "ranger_version", "created_utc",
   "rf_seeds", "models", "raw_predictors", "processed_predictors",
-  "preprocessing", "calibrators", "contract", "provenance", "validation"
+  "preprocessing", "calibrators", "contract", "provenance", "validation",
+  "excluded_predictors"
 )
 
 .amd_predictor_distance_limit <- 2000L
@@ -20,9 +21,9 @@
       call. = FALSE
     )
   }
-  if (!identical(bundle$schema, "amd_predictor_bundle_v2") ||
-      !identical(bundle$feature_contract, "amd_modal_features_left_pair_v2")) {
-    stop("unsupported predictor contract: this interface requires the corrected v2 bundle; historical v1 bundles remain separate.",
+  if (!identical(bundle$schema, "amd_predictor_bundle_v3_drop37") ||
+      !identical(bundle$feature_contract, "amd_modal_features_left_pair_v2_drop37")) {
+    stop("unsupported predictor contract: this interface requires the drop-37 v3 bundle; historical v1 bundles remain separate; v2 bundles require AMDconfigurations 0.2.x.",
          call. = FALSE)
   }
   if (!is.character(bundle$created_utc) || length(bundle$created_utc) != 1L ||
@@ -31,11 +32,28 @@
     stop("predictor bundle must declare its creation time and numerically resolved density-mode target.",
          call. = FALSE)
   }
+  dimensional <- function(x) c(grep(
+    "^data__(sd|range|pairwise_distance|nearest_distance|second_nearest_distance)__",
+    x, value = TRUE), intersect(c("data__total_variance", "data__mean_variance"), x))
+  if (length(bundle$raw_predictors) != 194L ||
+      length(bundle$processed_predictors) != 231L ||
+      !is.character(bundle$excluded_predictors) ||
+      length(bundle$excluded_predictors) != 37L ||
+      anyDuplicated(bundle$excluded_predictors) ||
+      !setequal(dimensional(bundle$excluded_predictors), bundle$excluded_predictors) ||
+      length(dimensional(bundle$raw_predictors)) ||
+      length(dimensional(sub("^missing__", "", bundle$processed_predictors)))) {
+    stop("drop-37 bundle must exclude the 37 dimensional descriptors and declare 194 raw and 231 processed predictors.",
+         call. = FALSE)
+  }
   if (!identical(bundle$contract$left_pair_missing_margin, 0) ||
-      !identical(bundle$validation$confidence_transfer_assessment,
-                 "retrospective_final_bank_20261012") ||
-      !isTRUE(bundle$validation$confidence_transfer_reference_gates_passed)) {
-    stop("corrected bundle lacks its boundary convention or completed confidence-transfer assessment.",
+      !identical(bundle$contract$reader_variant, "drop37_all_six_families") ||
+      !identical(bundle$validation$confidence_assessment,
+                 "retrospective_existing_fresh_bank_20261018") ||
+      !isTRUE(bundle$validation$own_calibrators) ||
+      !identical(bundle$validation$calibration_bank, "selection") ||
+      !isTRUE(bundle$validation$numerical_verification_passed)) {
+    stop("drop-37 bundle lacks its boundary convention, own selection calibrators or completed numerical assessment.",
          call. = FALSE)
   }
   if (!identical(as.integer(bundle$contract$candidates), 1:14) ||
@@ -44,7 +62,7 @@
   }
   if (!identical(as.integer(bundle$contract$n_validation_grid), c(150L, 600L)) ||
       !identical(as.integer(bundle$contract$d_validation_grid), c(2L, 6L, 15L)) ||
-      !identical(as.integer(bundle$contract$observed_validation_output_support), 1:8)) {
+      !identical(as.integer(bundle$contract$assessed_output_support), 1:8)) {
     stop("corrected bundle does not declare the assessed numerical and output support.",
          call. = FALSE)
   }
@@ -137,15 +155,15 @@
   invisible(TRUE)
 }
 
-#' Load the optional corrected AMD reader
+#' Load the optional drop-37 AMD reader
 #'
 #' Loads the external model bundle used by [predict_amd()]. The large fitted
 #' random forests are deliberately not embedded in the base package. Loading
 #' verifies a caller-supplied SHA-256, validates the model and preprocessing
-#' contracts, and never downloads or refits a model. Historical v1 bundles
-#' cannot be paired with the corrected extractor in this interface.
+#' contracts, and never downloads or refits a model. Historical v1/v2 bundles
+#' remain reproducible with their matching historical package versions.
 #'
-#' @param path Path to a corrected `amd_predictor_bundle_v2` RDS file.
+#' @param path Path to an `amd_predictor_bundle_v3_drop37` RDS file.
 #' @param sha256 Expected 64-character SHA-256 from the matching bundle manifest.
 #'   The optional package `digest` is required for this integrity check.
 #'
@@ -663,10 +681,10 @@ load_amd_predictor <- function(path, sha256) {
 #' Optional assistance for interpreting a complete AMD curve. It computes
 #' the frozen `c = 2,...,14` AMD analysis (unless a compatible curve is
 #' supplied), derives curve, data, and candidate-partition descriptors, and
-#' applies five externally loaded random forests. Reliability estimates the
-#' chance that the emitted one-versus-several-modes decision, or the exact
-#' proposed K, is correct within the assessed simulation domain. It is not
-#' directly the probability that groups exist. The target is the numerically
+#' applies five externally loaded random forests. Conditional reference values
+#' estimate correctness of the one-versus-several-modes decision and exact K
+#' under the reference simulation regime. Reliability for a new distribution
+#' remains unestablished; these values are not the probability that groups exist. The target is the numerically
 #' resolved number of density modes used as the simulation reference, not
 #' necessarily the number of generating components. AMD itself does not
 #' estimate a density.
@@ -691,26 +709,40 @@ load_amd_predictor <- function(path, sha256) {
 #'   partition distances remain exact. This distinction is recorded in the
 #'   resource diagnostics. No additional approximation bypasses the guard.
 #' @param allow_extrapolation Logical. Away from the validated numerical grid,
-#'   retain calibrated numerical values but label interpolation or
-#'   extrapolation as unvalidated instead of suppressing them.
+#'   retain conditional simulation-reference values in
+#'   `reference_reliability`, labelled as unvalidated interpolation or
+#'   extrapolation. This never establishes reliability for the analysed
+#'   distribution and does not override feature or output-support guards.
 #' @param verbose Logical; report progress while computing a new curve.
 #'
 #' @return An object of class `"amd_prediction"` containing the AMD curve,
 #'   proposed numerically resolved density-mode count `K`, separate structure
-#'   and exact-modal-count reliability estimates,
+#'   and exact-modal-count conditional reference estimates. `reliability`
+#'   remains `NA` because applicability to the analysed distribution has
+#'   not been established. `reference_reliability` contains the own-calibrator
+#'   values subject to applicability guards. `agreement` contains forest vote
+#'   fractions, not probabilities of correctness. `has_structure` is retained
+#'   as a compatibility alias for `proposed_multiple_modes`. The object includes
 #'   candidate scores, five-seed proposals, diagnostics, and applicability.
 #' @details
-#' The corrected forests use the documented missing-left-pair convention.
-#' Their unchanged historical calibrators were reassessed retrospectively on
-#' the previously examined final bank, not on a new prospective validation.
-#' Certainties are suppressed by default outside the numerical validation
-#' grid N = 150 or 600, D = 2, 6 or 15. Matching this grid does not certify
-#' the geometry of new data. The observed validation output support was K=1:8,
-#' although the mechanical candidate range is 1:14.
-#' Constant predictors dropped during training include the zero-variance
-#' fraction (always zero) and the minimum covariance-rank fraction (always one).
-#' A departure from those constants suppresses certainty, even on the numeric
-#' grid. This safeguard does not certify all other aspects of new-data geometry.
+#' The drop-37 forests omit 37 dimensional descriptors and use the corrected
+#' missing-left-pair convention. Their own correctness calibrators were fitted
+#' only on selection populations. A subsequent fixed-reader prospective bank
+#' gave 68.51 percent exact-count accuracy versus 70.91 percent mean reference
+#' confidence. A controlled distribution challenge gave 60.53 versus 66.71
+#' percent. Thus the calibrated values cannot certify accuracy for a new
+#' distribution merely because N and D match the simulation grid.
+#'
+#' Continuous exact-K and one/several values remain available separately in
+#' `reference_reliability`; no certainty threshold chooses or rejects K.
+#' By default these reference values are suppressed outside N = 150 or 600,
+#' D = 2, 6 or 15, assessed output support K=1:8, or assessed feature conditions.
+#' The mechanical candidate range remains 1:14. Departures from omitted
+#' training-constant predictors also suppress reference values.
+#' Neither forest unanimity nor a large reference value establishes
+#' distributional applicability. Count correctness does not validate FCM
+#' assignments or the scientific meaning of empirical configurations.
+#' See the installed `READER_EVIDENCE.txt` for evidence and limits.
 #'
 #' Supplying a compatible curve avoids its 260 principal fits. The additional
 #' five computational restarts per c required by the reader are still run;
@@ -850,8 +882,8 @@ predict_amd <- function(data, predictor, curve = NULL, seed = 1L,
   )
 
   applicability <- .amd_predictor_applicability(prepared$data, contract)
-  supported_k <- descriptors$prediction[[1L]] %in% 1:8
-  applicability$within_observed_output_support <- supported_k
+  supported_k <- descriptors$prediction[[1L]] %in% predictor$contract$assessed_output_support
+  applicability$within_assessed_output_support <- supported_k
   expected_missingness <- imputation_diagnostics$unexpected_nonfinite_values == 0L
   expected_constants <- !length(imputation_diagnostics$unassessed_constant_predictors)
   applicability$missingness_pattern_assessed <- expected_missingness
@@ -860,30 +892,28 @@ predict_amd <- function(data, predictor, curve = NULL, seed = 1L,
   applicability$proposal_status <- if (validated) "conditional_within_assessed_numeric_grid" else {
     "exploratory_outside_assessed_conditions"
   }
-  reliability_status <- if (validated) {
-    "retrospectively_assessed_on_numeric_grid"
-  } else if (!supported_k) {
-    "suppressed_outside_observed_output_support"
-  } else if (!expected_missingness) {
-    "suppressed_unassessed_missingness_pattern"
-  } else if (!expected_constants) {
-    "suppressed_unassessed_constant_predictors"
-  } else if (allow_extrapolation) {
-    applicability$numerical_status
-  } else {
-    paste0("suppressed_", applicability$numerical_status)
-  }
-  reported <- if (validated || (allow_extrapolation && supported_k && expected_missingness && expected_constants)) calibrated else {
-    c(structure = NA_real_, exact = NA_real_)
-  }
+  applicability$distribution_status <- "not_established_for_analysed_distribution"
+  applicability$count_correctness_validates_assignments <- FALSE
+  reference <- .amd_reference_reliability(
+    calibrated, applicability, supported_k, expected_missingness,
+    expected_constants, allow_extrapolation
+  )
 
   out <- list(
     proposed_k = as.integer(descriptors$prediction[[1L]]),
     has_structure = isTRUE(descriptors$prediction[[1L]] > 1L),
+    proposed_multiple_modes = isTRUE(descriptors$prediction[[1L]] > 1L),
     reliability = list(
-      structure = unname(reported[["structure"]]),
-      exact_k = unname(reported[["exact"]]),
-      status = reliability_status
+      one_several = NA_real_,
+      structure = NA_real_,
+      exact_k = NA_real_,
+      status = "not_established_for_analysed_distribution"
+    ),
+    reference_reliability = reference,
+    agreement = list(
+      exact_k = descriptors$exact_vote_fraction[[1L]],
+      one_several = descriptors$structure_vote_fraction[[1L]],
+      interpretation = "Agreement among five forests; not probability of correctness."
     ),
     curve = curve,
     numerical_peak = as.integer(curve$c_peak),
@@ -908,7 +938,7 @@ predict_amd <- function(data, predictor, curve = NULL, seed = 1L,
       schema = predictor$schema,
       feature_contract = predictor$feature_contract,
       sha256 = attr(predictor, "sha256"),
-      confidence_assessment = predictor$validation$confidence_transfer_assessment,
+      confidence_assessment = predictor$validation$confidence_assessment,
       created_utc = predictor$created_utc,
       source_path = attr(predictor, "source_path"),
       resolved_target = predictor$contract$resolved_target
@@ -937,7 +967,23 @@ print.amd_prediction <- function(x, ...) {
     cat("  The proposal itself is exploratory outside the assessed numerical grid.\n")
   }
   cat("  Numerical AMD peak:", x$numerical_peak, "\n")
-  if (is.finite(x$reliability$structure)) {
+  if (!is.null(x$agreement)) {
+    cat("  Forest agreement, exact / one-several:",
+        sprintf("%.0f%% / %.0f%%", 100 * x$agreement$exact_k,
+                100 * x$agreement$one_several), "(not certainty)\n")
+  }
+  if (!is.null(x$reference_reliability)) {
+    cat("  Reliability for this distribution: not established\n")
+    if (is.finite(x$reference_reliability$one_several)) {
+      cat("  Conditional simulation reference, one/several:",
+          sprintf("%.1f%%", 100 * x$reference_reliability$one_several), "\n")
+      cat("  Conditional simulation reference, exact modal count:",
+          sprintf("%.1f%%", 100 * x$reference_reliability$exact_k), "\n")
+    } else {
+      cat("  Conditional simulation reference: suppressed by applicability guards\n")
+    }
+    cat("  Reference status:", x$reference_reliability$status, "\n")
+  } else if (is.finite(x$reliability$structure)) {
     cat("  Reliability of the one/several-modes decision:",
         sprintf("%.1f%%", 100 * x$reliability$structure), "\n")
     cat("  Reliability, exact modal count:",
@@ -966,6 +1012,9 @@ summary.amd_prediction <- function(object, ...) {
     has_structure = object$has_structure,
     numerical_peak = object$numerical_peak,
     reliability = object$reliability,
+    reference_reliability = object$reference_reliability,
+    agreement = object$agreement,
+    proposed_multiple_modes = object$has_structure,
     applicability = object$applicability,
     forest_votes = table(object$per_forest$prediction),
     leading_candidates = object$candidate_scores[

@@ -1,31 +1,18 @@
-## Update from 0.1.0
+Update from 0.2.1 to 0.4.0 — local verification in progress
 
-This update preserves the published Average Membership Degree formula. It
-separates fixed-membership evaluation, curve construction, descriptive
-diagnostics, explicit stored-partition extraction and optional model assistance.
+Adopts the full-six-family drop-37 v3 optional reader, excluding 37 dimensional
+predictors responsible for the tested common-unit sensitivity. Separates the
+modal-count proposal, forest agreement and conditional simulation-reference
+values from unestablished reliability for the analysed distribution.
+Continuous own-calibrator values remain available with explicit scope.
 
-The primary curve now uses the minimum-objective converged fit at each c;
-random starts are computational attempts, not statistical replicates. Seeds
-are actually applied and recorded. Historical 0.1.0 curve objects remain
-inspectable without fabricating information absent from those objects.
-Sigma-equivalent has been intentionally removed. These compatibility changes
-and the reasons that recomputed curves can differ are documented in
-inst/MIGRATION.md and NEWS.md.
+Includes subsequent prospective and distribution-challenge evidence and
+terminology distinguishing fitted FCM configurations from population modes,
+generating components and modal basins. Count correctness does not validate
+assignments. The AMD definition, curve construction and datasets are unchanged.
 
-The optional model reader has no automatic download, startup or training
-behaviour. Its external model file is not in the source tarball. The base
-workflow does not require ranger or digest; these are Suggests. Reader
-integration is optional during CRAN checks and is exercised separately against
-the fixed-checksum model. The simulated domain and retrospective nature of
-confidence transfer are explicitly disclosed.
+Historical packages, forests, calibrators and submitted manuscript are preserved.
+External models are not embedded or automatically downloaded. ranger and digest
+remain suggested dependencies. Code is MIT; the drop-37 model is CC BY 4.0.
 
-The bundled datasets are byte-identical to version 0.1.0; documentation of
-their actual dimensions and provenance has been corrected. The separately
-attributed transcriptomic data retain their CC BY 4.0 licence (inst/COPYRIGHTS).
-
-## Verification record
-
-No reverse dependencies were found in the complete CRAN source-package index
-on 2026-10-12 (Depends, Imports, LinkingTo, Suggests and Enhances checked).
-Release verification is recorded separately; this file will be completed
-with current-R checks before submission and is excluded from the tarball.
+Final test results will be recorded after this source completes its checks.

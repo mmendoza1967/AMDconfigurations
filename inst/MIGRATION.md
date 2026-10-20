@@ -102,42 +102,41 @@ measure density, geometric compactness or resampling stability. Missing
 neighbours and summaries of empty hard groups remain `NA`; no imputation is
 used in this descriptive interface.
 
-## Optional corrected reader
+## Optional drop-37 reader in 0.4.0
 
-`load_amd_predictor(path, sha256)` and `predict_amd(data, predictor)` provide
-optional model assistance. The external bundle is not included in the package
-and requires its expected checksum. `ranger` and `digest` are suggested, not
-core dependencies; there are no automatic downloads or training operations.
+The v3 drop-37 bundle and its five full-six-family forests remain compatible.
+Historical v1/v2 bundles require their historical package versions.
+The curve contract remains c=2:14, 20 principal starts, five computational
+refits per c, m=2, iter_max=2000, with no automatic scaling or variable selection.
+The AMD definition and stored FCM partitions are unchanged.
 
-Only the corrected v2 contract is accepted. The historical v1 reader remains
-an unchanged study artefact and must use its matching historical extractor.
-Changing a feature without matching models is not a supported migration.
+Code previously reading `result$reliability$exact_k` or `$structure` must use
+`result$reference_reliability$exact_k` or `$one_several` when it needs the
+conditional simulation estimates. These values have the limited meaning below.
+The old `has_structure` field is retained as an alias for
+`proposed_multiple_modes`: one density mode does not mean absence of all
+structure. Empirical configurations refer to the fitted FCM partition.
 
-The reader's contract fixes c=2:14, 20 principal starts, five computational
-refits per c, m=2 and iter_max=2000, without scaling or variable preselection.
-A compatible saved curve can replace the principal fits; computational refits
-are still required and are not sample-level stability.
+The reader estimates the population density-mode count. `proposed_k` is its
+proposal; `agreement` describes the five forest votes. Neither consensus nor the
+numerical AMD maximum is an automatic scientific choice of resolution.
 
-The proposed K is the numerically resolved density-mode count used as the
-simulation reference, not necessarily the number of generating components.
-It is not the numerical AMD peak or an automatic scientific conclusion;
-AMD itself does not estimate a density. Off-grid proposals themselves are
-labelled exploratory. The two certainties concern correctness of the emitted
-one/several-modes decision and of exact K. Their transfer to corrected forests
-was assessed retrospectively on the previously examined final bank. By default
-they are suppressed outside N={150,600}, D={2,6,15}, observed output support
-K=1:8 or assessed missingness patterns. Grid membership does not certify new-data
-geometry. The frozen models omitted value columns for zero-variance fraction
-(always zero in training) and minimum covariance-rank fraction (always one).
-Departures suppress certainty even on-grid and cannot be overridden with
-allow_extrapolation. Do not change a dataset just to match the grid. Explicitly retaining
-off-grid values does not validate interpolation or extrapolation.
+`reliability` is `NA` with status
+`not_established_for_analysed_distribution`. Continuous own-calibrator values
+remain in `reference_reliability`, separately for exact K and one/several.
+These are estimates conditional on the reference simulations, not certified
+probabilities for a new distribution. Matching N and D does not establish
+distributional applicability. A later prospective bank showed an exact-count
+confidence excess of 2.40 percentage points; a controlled distribution challenge
+showed an excess of 6.18 points. Unanimous forests can share the same error.
 
-Large data may exceed the working-memory guard; it is not a runtime limit.
-Partition distances remain exact, but the frozen global-distance descriptors
-use a seeded sample of 2000 rows when N > 2000. Their actual sample count and
-sampling flags are reported. No additional approximation bypasses the guard.
-The manual curve workflow remains available. Obtain the corrected-v2 bundle
-from the matching versioned GitHub release and compare its SHA-256 with the
-release manifest before loading it. The CRAN package does not contain or
-automatically download the model.
+Reference values are suppressed by default outside N={150,600}, D={2,6,15},
+assessed output support K=1:8, or assessed missingness and training-constant
+conditions. `allow_extrapolation=TRUE` exposes off-grid reference values only;
+it never certifies applicability or overrides feature/output guards.
+No confidence cutoff chooses K. Do not alter data to match the numerical grid.
+See `system.file("READER_EVIDENCE.txt", package="AMDconfigurations")`.
+
+The memory guard and explicit external-model loading remain in force.
+The source package does not contain or automatically download the bundle.
+Local installation and public release are recorded separately.

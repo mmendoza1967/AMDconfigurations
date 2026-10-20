@@ -1,38 +1,141 @@
 {
-  "schema": "amd_public_model_manifest_v1",
-  "file": "amd_predictor_bundle_v2.rds",
-  "bytes": 86675904,
-  "sha256": "961f7ab814b41414f9342398726cac8058a65095d98dc18966c6e316b665c630",
-  "bundle_schema": "amd_predictor_bundle_v2",
-  "feature_contract": "amd_modal_features_left_pair_v2",
-  "created_utc": "2026-10-12 09:56:17 UTC",
-  "bundle_assembly_package_version": "0.2.0.9014",
-  "compatible_package_release": "0.2.0",
+  "schema": "amd_public_model_manifest_v2",
+  "file": "amd_predictor_bundle_v3_drop37.rds",
+  "bytes": 51787778,
+  "sha256": "3407a5a55c30a70e150afaa16a52ee4f2c8d3ed265941f3af8c4cb9d0c99035f",
+  "bundle_schema": "amd_predictor_bundle_v3_drop37",
+  "feature_contract": "amd_modal_features_left_pair_v2_drop37",
+  "created_utc": "2026-10-18 11:04:15 UTC",
+  "compatible_package_release": "0.4.0",
+  "release_status": "LOCAL_040_VERIFICATION_IN_PROGRESS",
   "resolved_target": "numerically_resolved_density_mode_count",
-  "forest_seeds": [101, 202, 303, 404, 505],
+  "reader_variant": "drop37_all_six_families",
+  "forest_seeds": [
+    101,
+    202,
+    303,
+    404,
+    505
+  ],
   "trees_per_forest": 1000,
-  "raw_predictors": 231,
-  "processed_predictors": 268,
+  "raw_predictors": 194,
+  "processed_predictors": 231,
+  "excluded_predictors": [
+    "data__total_variance",
+    "data__mean_variance",
+    "data__sd__min",
+    "data__sd__q25",
+    "data__sd__median",
+    "data__sd__mean",
+    "data__sd__q75",
+    "data__sd__max",
+    "data__sd__sd",
+    "data__range__min",
+    "data__range__q25",
+    "data__range__median",
+    "data__range__mean",
+    "data__range__q75",
+    "data__range__max",
+    "data__range__sd",
+    "data__pairwise_distance__min",
+    "data__pairwise_distance__q25",
+    "data__pairwise_distance__median",
+    "data__pairwise_distance__mean",
+    "data__pairwise_distance__q75",
+    "data__pairwise_distance__max",
+    "data__pairwise_distance__sd",
+    "data__nearest_distance__min",
+    "data__nearest_distance__q25",
+    "data__nearest_distance__median",
+    "data__nearest_distance__mean",
+    "data__nearest_distance__q75",
+    "data__nearest_distance__max",
+    "data__nearest_distance__sd",
+    "data__second_nearest_distance__min",
+    "data__second_nearest_distance__q25",
+    "data__second_nearest_distance__median",
+    "data__second_nearest_distance__mean",
+    "data__second_nearest_distance__q75",
+    "data__second_nearest_distance__max",
+    "data__second_nearest_distance__sd"
+  ],
   "ranger_version_used": "0.18.0",
-  "principal_curve": {
-    "c": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-    "starts_per_c": 20,
-    "computational_refits_per_c": 5,
-    "m": 2,
-    "iter_max": 2000,
-    "scale_data": false,
-    "variable_preselection": false
-  },
+  "forest_training_bank": "discovery",
+  "training_populations": 1725,
+  "calibration_bank": "selection",
+  "calibration_populations": 1721,
   "confidence": {
-    "assessment": "retrospective_transfer_on_previously_examined_final_bank",
-    "calibrators_refitted": false,
-    "numerical_N_grid": [150, 600],
-    "numerical_D_grid": [2, 6, 15],
-    "observed_output_support": [1, 2, 3, 4, 5, 6, 7, 8],
+    "own_calibrators": true,
+    "assessment": "retrospective_existing_fresh_bank_20261018",
+    "evaluation_populations": 1728,
+    "resolved": 1719,
+    "prospective_calibrator_validation": false,
+    "numerical_N_grid": [
+      150,
+      600
+    ],
+    "numerical_D_grid": [
+      2,
+      6,
+      15
+    ],
+    "assessed_reporting_output_support": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "observed_prediction_counts": [
+      {
+        "Var1": "1",
+        "Freq": 342
+      },
+      {
+        "Var1": "2",
+        "Freq": 196
+      },
+      {
+        "Var1": "3",
+        "Freq": 211
+      },
+      {
+        "Var1": "4",
+        "Freq": 236
+      },
+      {
+        "Var1": "5",
+        "Freq": 203
+      },
+      {
+        "Var1": "6",
+        "Freq": 194
+      },
+      {
+        "Var1": "7",
+        "Freq": 200
+      },
+      {
+        "Var1": "8",
+        "Freq": 145
+      },
+      {
+        "Var1": "9",
+        "Freq": 1
+      }
+    ],
     "geometry_certified_by_grid_membership": false,
-    "universal_reliability_claimed": false
+    "universal_reliability_claimed": false,
+    "bundle_metadata_is_frozen": true,
+    "later_assessments": "See installed READER_EVIDENCE.txt; prospective and distribution challenge completed.",
+    "reported_value_interpretation": "Conditional simulation reference; reliability for analysed distribution not established."
   },
-  "license": "MIT",
+  "common_unit_invariance_scope": "Positive common multiplication of all coordinates; no independent variable reweighting claim.",
+  "license": "CC-BY-4.0",
   "copyright_holder": "Manuel Mendoza",
-  "historical_study_reader_replaced": false
+  "historical_study_reader_replaced": false,
+  "also_compatible_with_frozen_package": "0.3.0"
 }

@@ -1,12 +1,19 @@
 on:
+  pull_request:
+    paths:
+      - 'R/**'
+      - 'tests/**'
+      - 'DESCRIPTION'
+      - 'models/manifest.json'
+      - '.github/workflows/reader-integration.yaml'
   release:
     types: [published]
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Versioned GitHub release containing the corrected-v2 model asset'
+        description: 'Versioned GitHub release containing the drop-37 v3 model asset'
         required: true
-        default: 'v0.2.0'
+        default: 'v0.4.0'
         type: string
 
 name: External reader integration
@@ -24,7 +31,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
       # Model releases are independent of documentation-only package patches.
-      AMD_RELEASE_TAG: ${{ inputs.release_tag || 'v0.2.0' }}
+      AMD_RELEASE_TAG: ${{ inputs.release_tag || github.event.release.tag_name || 'v0.4.0' }}
     steps:
       - uses: actions/checkout@v4
       - uses: r-lib/actions/setup-pandoc@v2
@@ -36,17 +43,22 @@ jobs:
         with:
           extra-packages: any::rcmdcheck, any::jsonlite
           needs: check
-      - name: Fetch and verify the explicitly versioned external model
+      - name: Fetch the explicitly versioned model asset
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$AMD_RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern 'amd_predictor_bundle_v3_drop37.rds' \
+            --dir "$RUNNER_TEMP"
+      - name: Verify the external model
         shell: Rscript {0}
         run: |
           manifest <- jsonlite::read_json("models/manifest.json", simplifyVector = TRUE)
           tag <- Sys.getenv("AMD_RELEASE_TAG")
           stopifnot(grepl("^v[0-9]+[.][0-9]+[.][0-9]+$", tag))
-          url <- paste0("https://github.com/mmendoza1967/AMDconfigurations/releases/download/",
-                        tag, "/", manifest$file)
           model <- file.path(Sys.getenv("RUNNER_TEMP"), manifest$file)
-          options(timeout = max(600, getOption("timeout")))
-          download.file(url, model, mode = "wb")
           stopifnot(file.info(model)$size == manifest$bytes,
                     digest::digest(file = model, algo = "sha256") == manifest$sha256)
           writeLines(c(paste0("AMD_PREDICTOR_BUNDLE=", model),
