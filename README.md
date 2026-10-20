@@ -28,9 +28,9 @@ information to reconstruct the new minimum-objective primary curve.
 
 ## Installation
 
-This directory prepares version 0.4.0 with the drop-37 reader. It is a local
-release candidate and has not yet been published. Install this candidate
-explicitly from its built source archive:
+This directory contains version 0.4.0 with the drop-37 reader. Local installation
+and public release are recorded separately; this version has not yet been
+published. Install it explicitly from its built source archive:
 
 ```r
 install.packages("AMDconfigurations_0.4.0.tar.gz", repos = NULL, type = "source")

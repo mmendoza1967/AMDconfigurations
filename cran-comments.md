@@ -1,4 +1,4 @@
-Update from 0.2.1 to 0.4.0 — local verification in progress
+Update from 0.2.1 to 0.4.0 — local release preparation
 
 Adopts the full-six-family drop-37 v3 optional reader, excluding 37 dimensional
 predictors responsible for the tested common-unit sensitivity. Separates the
@@ -15,4 +15,9 @@ Historical packages, forests, calibrators and submitted manuscript are preserved
 External models are not embedded or automatically downloaded. ranger and digest
 remain suggested dependencies. Code is MIT; the drop-37 model is CC BY 4.0.
 
-Final test results will be recorded after this source completes its checks.
+Verification uses R 4.5.3 on Windows and Linux, with the real external
+drop-37 bundle enabled. The full Windows check includes vignettes and the
+manual PDF; Linux separately checks installation and the functional suite.
+The exact final source archive and check results are recorded in the local
+release manifest. Current-R and additional-platform public CI, public release
+and CRAN submission are separate actions and are not claimed here.

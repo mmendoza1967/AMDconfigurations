@@ -28,6 +28,25 @@ drop-37 proposals in 1728 descriptor-level checks and 36 prespecified
 end-to-end checks. This does not establish invariance to arbitrary
 independent rescaling of variables or formal predictive equivalence.
 
+Retrospective comparison on the historical final benchmark
+1723 resolved populations, including four truths above eight; no new forests.
+Drop-37 exact-count accuracy: 69.8201%, population bootstrap 95% interval
+67.5566 to 72.0255. Historical complete reader: 75.1596%; paired difference
+-5.3395 percentage points, interval -6.8485 to -3.8305.
+The historical reader was fitted on discovery plus selection, whereas this
+drop-37 reader uses discovery only. This is not a causal feature ablation.
+Gap firstSEmax achieved 57.0517%, GMM-ICL 56.9356%, and GMM-BIC 55.9489%.
+These are comparisons of complete procedures within the assessed domain.
+
+Assignment recovery was evaluated independently of count accuracy. Using
+1722 populations with fully assigned modal-basin references, mean selected
+FCM-partition ARI was 0.7526 for drop-37 and 0.7630 for the historical reader.
+Among the 1452 multimodal populations, respective means were 0.7218 and
+0.7300. FCM supplied with the true modal count gave 0.7448; GMM-BIC gave
+0.7964. Better count accuracy therefore did not imply better assignments.
+The strict analysis excludes one partially assigned reference population;
+it does not silently remove individual unassigned observations.
+
 Prospective assessment with frozen reader and own calibrators
 1728 generated, 1721 resolved, 7 unresolved; six resolved truths above 8.
 Exact count: accuracy 68.5067%, mean reference confidence 70.9105%;
@@ -49,6 +68,35 @@ Among 565 reference values >=0.9, 50 exact-count errors occurred. A
 post-result subgroup of 189 proposals of K=2 contained 46 errors; all five
 forests agreed in those errors. This descriptive cutoff is not a K rule.
 
+Completed training-intervention review
+Two fixed interventions retained all six original families and the same
+drop-37 predictors: adding stored challenge populations with equal bank mass,
+and then controlling bank and modal-count masses to separate weight effects.
+Each intervention fitted 100 forests: 19 complete held-out scenarios times
+five seeds and five full fits for the prior bank. These are retrospective
+comparisons on already examined banks, not independent confirmation.
+
+Original / augmented / weight-controlled challenge exact-count accuracies:
+60.53% / 67.43% / 67.05%. The weight-controlled gain over the frozen reader
+was 6.52 percentage points (conditional scenario-bootstrap 95% 3.67 to 9.43).
+Prior-bank exact accuracies were 68.51% / 68.33% / 68.39%.
+The average challenge improvements are retained as positive findings.
+
+In scenario 13, with three true modes in all 96 populations, false proposals
+of one mode were 0 / 30 / 23. Thus controlling weights mitigated but did not
+remove the substantial local regression. Both interventions repaired only
+three of the 46 original high-reference K=2 errors. Scenario 14 exact-count
+successes were 10 / 3 / 3 out of 96. The weight-controlled prior-bank
+one/several accuracy was 92.45%, compared with the frozen reader's 92.97%.
+No post-result noninferiority threshold was invented.
+
+Both replacements are rejected for this release and archived as completed
+experimental evidence. They are not an open adoption queue. No calibrators
+were fitted for these rejected models, and no original-reader certainty was
+transferred to them. The package retains the frozen reader's measured
+performance and limitations; this reporting correction is not a claim that
+all modal-count errors or arbitrary distribution shifts have been repaired.
+
 Operational consequence
 The package retains modal-count estimation. It reports proposed_k and
 proposed_multiple_modes, forest agreement, and continuous conditional
@@ -62,9 +110,12 @@ Sources in the reproducibility workspace
 rf_drop37_fresh_validation_20261014/VALIDATION_CLOSEOUT_20261016.json
 drop37_certainty_prospective_20261018/VALIDATION_CLOSEOUT.json
 drop37_applicability_20261019/EXPERIMENT_CLOSEOUT.json
+paper_revision_20261020/FINAL_BENCHMARK_VERIFIED.json
+paper_revision_20261020/assignment_results/ASSIGNMENT_VERIFIED.json
+drop37_training_repair_20261019/INFORME_REVISION_APRENDIZAJE_20261020.txt
+drop37_weight_control_20261020/INFORME_CIERRE_LECTOR_20261020.txt
 TERMINOLOGIA_AMD.txt
-Later training interventions are recorded separately and are not silently
-substituted into these fixed-reader results.
+Training-intervention results are not substituted into fixed-reader results.
 
 Conceptual references
 Hennig, C. (2015), What are the true clusters?

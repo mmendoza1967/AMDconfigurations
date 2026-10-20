@@ -10,6 +10,11 @@
   specified resolution, distinct from components, modes and modal basins.
 - Included subsequent prospective and distribution-challenge evidence, including
   exact-count overconfidence and confident unanimous errors.
+- Closed the augmented-training and modal-weight-control review. Both tested
+  replacements are excluded from this release because substantial local
+  regressions remain. The frozen drop-37 forests and own calibrators are retained.
+- Added retrospective historical-benchmark and modal-basin assignment results
+  for the frozen reader, with their distinct training and evaluation scopes.
 
 # AMDconfigurations 0.3.0 (local release candidate)
 

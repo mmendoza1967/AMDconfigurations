@@ -7,7 +7,7 @@
   "feature_contract": "amd_modal_features_left_pair_v2_drop37",
   "created_utc": "2026-10-18 11:04:15 UTC",
   "compatible_package_release": "0.4.0",
-  "release_status": "LOCAL_040_VERIFICATION_IN_PROGRESS",
+  "release_status": "LOCAL_040_CHECKED_ACTIVATED_NOT_PUBLISHED",
   "resolved_target": "numerically_resolved_density_mode_count",
   "reader_variant": "drop37_all_six_families",
   "forest_seeds": [
@@ -69,7 +69,6 @@
     "assessment": "retrospective_existing_fresh_bank_20261018",
     "evaluation_populations": 1728,
     "resolved": 1719,
-    "prospective_calibrator_validation": false,
     "numerical_N_grid": [
       150,
       600
@@ -131,11 +130,15 @@
     "universal_reliability_claimed": false,
     "bundle_metadata_is_frozen": true,
     "later_assessments": "See installed READER_EVIDENCE.txt; prospective and distribution challenge completed.",
-    "reported_value_interpretation": "Conditional simulation reference; reliability for analysed distribution not established."
+    "reported_value_interpretation": "Conditional simulation reference; reliability for analysed distribution not established.",
+    "prospective_calibrator_validation_at_bundle_creation": false,
+    "prospective_fixed_reader_assessment_completed": true,
+    "assessment_scope": "The retrospective fields above describe bundle-creation metadata. Subsequent fixed-reader prospective and distribution-challenge assessments are complete; their evidence is external to the unchanged frozen bundle."
   },
   "common_unit_invariance_scope": "Positive common multiplication of all coordinates; no independent variable reweighting claim.",
   "license": "CC-BY-4.0",
   "copyright_holder": "Manuel Mendoza",
   "historical_study_reader_replaced": false,
-  "also_compatible_with_frozen_package": "0.3.0"
+  "also_compatible_with_frozen_package": "0.3.0",
+  "replacement_training_review": "Completed 2026-10-20. Augmented and modal-weight-controlled replacements rejected for 0.4.0 and archived as completed experiments."
 }
