@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/mmendoza1967/AMDconfigurations/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/mmendoza1967/AMDconfigurations/blob/v0.4.0/inst/CITATION)
 
 Mendoza, M. and Araújo, M. B. (2022). Biogeography of bird and mammal
 trophic structures. Ecography 2022(5): e06289. doi:10.1111/ecog.06289
