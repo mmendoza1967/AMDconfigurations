@@ -21,7 +21,38 @@ name: External reader integration
 permissions: read-all
 
 jobs:
+  fetch-model:
+    runs-on: ubuntu-latest
+    # Draft releases are visible only with push access. Keep this token in a
+    # download-only job that never checks out or executes package/PR code.
+    permissions:
+      contents: write
+    env:
+      AMD_RELEASE_TAG: ${{ inputs.release_tag || github.event.release.tag_name || 'v0.4.0' }}
+    steps:
+      - name: Fetch the explicitly versioned model, including a private draft
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          [[ "$AMD_RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          asset_id=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" |
+            jq -r --arg tag "$AMD_RELEASE_TAG" '.[] | select(.tag_name == $tag) |
+              .assets[] | select(.name == "amd_predictor_bundle_v3_drop37.rds") | .id')
+          [[ "$asset_id" =~ ^[0-9]+$ ]]
+          gh api -H 'Accept: application/octet-stream' \
+            "repos/$GITHUB_REPOSITORY/releases/assets/$asset_id" \
+            > "$RUNNER_TEMP/amd_predictor_bundle_v3_drop37.rds"
+          echo '3407a5a55c30a70e150afaa16a52ee4f2c8d3ed265941f3af8c4cb9d0c99035f  '"$RUNNER_TEMP/amd_predictor_bundle_v3_drop37.rds" | sha256sum --check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frozen-drop37-reader
+          path: ${{ runner.temp }}/amd_predictor_bundle_v3_drop37.rds
+          retention-days: 1
+          if-no-files-found: error
   reader-integration:
+    needs: fetch-model
     strategy:
       fail-fast: false
       matrix:
@@ -43,15 +74,10 @@ jobs:
         with:
           extra-packages: any::rcmdcheck, any::jsonlite
           needs: check
-      - name: Fetch the explicitly versioned model asset
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release download "$AMD_RELEASE_TAG" \
-            --repo "$GITHUB_REPOSITORY" \
-            --pattern 'amd_predictor_bundle_v3_drop37.rds' \
-            --dir "$RUNNER_TEMP"
+      - uses: actions/download-artifact@v4
+        with:
+          name: frozen-drop37-reader
+          path: ${{ runner.temp }}
       - name: Verify the external model
         shell: Rscript {0}
         run: |
